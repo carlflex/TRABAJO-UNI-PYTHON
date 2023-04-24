@@ -18,11 +18,11 @@ def failLogin():
         print("-----------------------------------------")
         user=input("Ingrese el Usuario: ")
         user_password=input("Ingrese la contraseña: ")
-        print("-----------------------------------------")
+        print("-----------------------------------------\n")
         if (admin==user) and (contraseña==user_password):
             print("Ingreso exitoso")
             print("-----------------------------------------")
-            break
+            strike=0
         else:
             print("Usuario o contraseña icorrecto")
             print("-----------------------------------------")
@@ -31,7 +31,9 @@ def failLogin():
 
     if strike==0:
         print("Ya no se permiten mas Intentos")
-        print("-----------------------------------------")        
+        print("-----------------------------------------")
+    else:
+        menuMain()        
     return
 
 
@@ -40,5 +42,5 @@ if (user==admin) and (user_password==contraseña):
     menuMain()
 else:
     print("Usuario o contraseña icorrecto")
-    print("-----------------------------------------") 
+    print("-----------------------------------------\n") 
     failLogin()
