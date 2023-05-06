@@ -149,7 +149,7 @@ def menu_novedades():
 
         print("a) Crear novedades")
         print("b) Modificar novedad")
-        print("c) Crear novedad")
+        print("c) Eliminar novedad")
         print("d) Ver reporte de novedades")
         print("e) Volver")
 
