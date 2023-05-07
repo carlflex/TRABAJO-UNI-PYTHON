@@ -2,7 +2,7 @@ import getpass
 
 #Variables globales
 admin="admin@shopping.com"
-contraseña="12345"
+clave="12345"
 strike=2
 
 count_indumentaria=0
@@ -53,11 +53,63 @@ def menuMain():
                 end=False
                 print("SALIENDO DEL SCRIPT")
 
-#Funcion del menu de locales           
-def menu_local():
+def CreacionLocal():
 
     global count_perfumeria,count_indumentaria,count_comida,rubro_mayor,rubro_menor,mayor,menor
     
+    nombreLocal= input("Ingrese el nombre: ")
+    ubicacionLocal=input("Ingrese la ubicacion: ")
+    rubroLocal=input("Ingrese el rubro: ")
+    print("-----------------------------------\n")
+
+    while(rubroLocal!="indumentaria") and (rubroLocal!="comida") and (rubroLocal!="perfumeria"):
+        print("El rubro no existe, tiene estas opciones: indumentaria, perfumeria, comida")
+        rubroLocal=input("Ingrese el rubro: ")
+                    
+    match rubroLocal:
+        case "indumentaria":
+            count_indumentaria+=1
+        case "comida":
+            count_comida+=1
+        case "perfumeria":
+            count_perfumeria+=1
+                
+    if (count_comida > count_perfumeria) and (count_comida > count_indumentaria):
+        mayor=count_comida
+        rubro_mayor="comida"
+    elif (count_perfumeria > count_comida) and (count_perfumeria > count_indumentaria):
+        mayor=count_perfumeria
+        rubro_mayor="perfumeria"
+    elif (count_indumentaria > count_comida) and (count_indumentaria > count_perfumeria):
+        mayor=count_indumentaria
+        rubro_mayor="indumentaria"
+
+    if (count_comida <= count_perfumeria) and (count_comida <= count_indumentaria):
+        menor=count_comida
+        rubro_menor="comida"
+    elif (count_perfumeria <= count_comida) and (count_perfumeria <= count_indumentaria):
+        menor=count_perfumeria
+        rubro_menor="perfumeria"
+    elif (count_indumentaria <= count_comida) and (count_indumentaria <= count_perfumeria):
+        menor=count_indumentaria
+        rubro_menor="indumentaria"
+                
+    print("---------------------------")
+    print(f"Se a creado con exito el local {nombreLocal} en la ubicacion {ubicacionLocal}")
+    print("---------------------------")
+
+    if (count_indumentaria != count_comida) or (count_indumentaria != count_perfumeria) or (count_comida != count_perfumeria):
+        print("Rubro con mas locales")
+        print(f"El rubro de {rubro_mayor}, con un total de: {mayor} locales") 
+        print("---------------------------")
+        print("Rubro con menos locales")
+        print(f"El rubro de {rubro_menor}, con un total de: {menor} locales") 
+        print("---------------------------\n")
+    else:
+        print("Los rubros tienen la misma cantidad de locales")    
+
+#Funcion del menu de locales           
+def menu_local():
     end=True
     
     while end:
@@ -67,7 +119,7 @@ def menu_local():
 
         print("a) Crear locales")
         print("b) Modificar local")
-        print("c) Crear locales")
+        print("c) Eliminar locales")
         print("d) Volver")
 
         action= input("Ingrese una opcion: ")
@@ -77,57 +129,7 @@ def menu_local():
 
         match action:
             case "a":
-                nombreLocal= input("Ingrese el nombre: ")
-                ubicacionLocal=input("Ingrese la ubicacion: ")
-                rubroLocal=input("Ingrese el rubro: ")
-                print("-----------------------------------\n")
-
-                while(rubroLocal!="indumentaria") and (rubroLocal!="comida") and (rubroLocal!="perfumeria"):
-                    print("El rubro no existe, tiene estas opciones: indumentaria, perfumeria, comida")
-                    rubroLocal=input("Ingrese el rubro: ")
-                    
-                match rubroLocal:
-                    case "indumentaria":
-                            count_indumentaria+=1
-                    case "comida":
-                            count_comida+=1
-                    case "perfumeria":
-                            count_perfumeria+=1
-                
-                if (count_comida > count_perfumeria) and (count_comida > count_indumentaria):
-                    mayor=count_comida
-                    rubro_mayor="comida"
-                elif (count_perfumeria > count_comida) and (count_perfumeria > count_indumentaria):
-                    mayor=count_perfumeria
-                    rubro_mayor="perfumeria"
-                elif (count_indumentaria > count_comida) and (count_indumentaria > count_perfumeria):
-                    mayor=count_indumentaria
-                    rubro_mayor="indumentaria"
-
-                if (count_comida <= count_perfumeria) and (count_comida <= count_indumentaria):
-                    menor=count_comida
-                    rubro_menor="comida"
-                elif (count_perfumeria <= count_comida) and (count_perfumeria <= count_indumentaria):
-                    menor=count_perfumeria
-                    rubro_menor="perfumeria"
-                elif (count_indumentaria <= count_comida) and (count_indumentaria <= count_perfumeria):
-                    menor=count_indumentaria
-                    rubro_menor="indumentaria"
-                
-                print("---------------------------")
-                print(f"Se a creado con exito el local {nombreLocal} en la ubicacion {ubicacionLocal}")
-                print("---------------------------")
-
-                if (count_indumentaria != count_comida) or (count_indumentaria != count_perfumeria) or (count_comida != count_perfumeria):
-                    print("Rubro con mas locales")
-                    print(f"El rubro de {rubro_mayor}, con un total de: {mayor} locales") 
-                    print("---------------------------")
-                    print("Rubro con menos locales")
-                    print(f"El rubro de {rubro_menor}, con un total de: {menor} locales") 
-                    print("---------------------------\n")
-                else:
-                    print("Los rubros tienen la misma cantidad de locales")
-
+                CreacionLocal()
             case "b":
                 coming_soon()
                 
@@ -185,7 +187,7 @@ def failLogin():
         nombreUsuario=input("Ingrese el usuario: ")
         claveUsuario=getpass.getpass("Ingrese la contraseña: ")
         print("-----------------------------------------")
-        if (nombreUsuario==admin) and (claveUsuario==contraseña):
+        if (nombreUsuario==admin) and (claveUsuario==clave):
             print("Ingreso exitoso")
             print("-----------------------------------------\n")
             strike=0
@@ -204,10 +206,10 @@ def failLogin():
 
 #Programa Principal
 nombreUsuario=input("Ingrese el usuario: ")
-claveUsuario=getpass.getpass("Ingrese la contraseña: ")
+claveUsuario=getpass.getpass("Ingrese la clave: ")
 print("-----------------------------------------\n")
 
-if (nombreUsuario==admin) and (claveUsuario==contraseña):
+if (nombreUsuario==admin) and (claveUsuario==clave):
     print("Bienvenido")
     menuMain()
 else:
