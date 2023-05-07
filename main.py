@@ -54,6 +54,28 @@ def menuMain():
                 end=False
                 print("SALIENDO DEL SCRIPT")
 
+def DecisionMayor_Menor():
+    global count_perfumeria,count_indumentaria,count_comida,rubro_mayor,rubro_menor,mayor,menor
+    if (count_comida > count_perfumeria) and (count_comida > count_indumentaria):
+        mayor=count_comida
+        rubro_mayor="comida"
+    elif (count_perfumeria > count_comida) and (count_perfumeria > count_indumentaria):
+        mayor=count_perfumeria
+        rubro_mayor="perfumeria"
+    elif (count_indumentaria > count_comida) and (count_indumentaria > count_perfumeria):
+        mayor=count_indumentaria
+        rubro_mayor="indumentaria"
+
+    if (count_comida <= count_perfumeria) and (count_comida <= count_indumentaria):
+        menor=count_comida
+        rubro_menor="comida"
+    elif (count_perfumeria <= count_comida) and (count_perfumeria <= count_indumentaria):
+        menor=count_perfumeria
+        rubro_menor="perfumeria"
+    elif (count_indumentaria <= count_comida) and (count_indumentaria <= count_perfumeria):
+        menor=count_indumentaria
+        rubro_menor="indumentaria"
+
 def CreacionLocal():
 
     global count_perfumeria,count_indumentaria,count_comida,rubro_mayor,rubro_menor,mayor,menor,limit
@@ -74,27 +96,9 @@ def CreacionLocal():
             count_comida+=1
         case "perfumeria":
             count_perfumeria+=1
-                
-    if (count_comida > count_perfumeria) and (count_comida > count_indumentaria):
-        mayor=count_comida
-        rubro_mayor="comida"
-    elif (count_perfumeria > count_comida) and (count_perfumeria > count_indumentaria):
-        mayor=count_perfumeria
-        rubro_mayor="perfumeria"
-    elif (count_indumentaria > count_comida) and (count_indumentaria > count_perfumeria):
-        mayor=count_indumentaria
-        rubro_mayor="indumentaria"
 
-    if (count_comida <= count_perfumeria) and (count_comida <= count_indumentaria):
-        menor=count_comida
-        rubro_menor="comida"
-    elif (count_perfumeria <= count_comida) and (count_perfumeria <= count_indumentaria):
-        menor=count_perfumeria
-        rubro_menor="perfumeria"
-    elif (count_indumentaria <= count_comida) and (count_indumentaria <= count_perfumeria):
-        menor=count_indumentaria
-        rubro_menor="indumentaria"
-                
+    DecisionMayor_Menor()
+                  
     print("---------------------------")
     print(f"Se a creado con exito el local {nombreLocal} en la ubicacion {ubicacionLocal}")
     print("---------------------------")
