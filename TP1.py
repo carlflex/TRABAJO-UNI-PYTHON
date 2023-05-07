@@ -1,4 +1,9 @@
 import getpass
+#Integrantes:
+#Gugliermino Carlos
+#Teo Valentin Garcia Queipo
+#Franco Zariaga
+#Lucas Colalongo
 
 #Variables globales
 admin="admin@shopping.com"
@@ -219,8 +224,6 @@ def failLogin():
         print("Ya no se permiten mas intentos")
         print("-----------------------------------------\n")
   
-        
-
 #Programa Principal
 nombreUsuario=input("Ingrese el usuario: ")
 claveUsuario=getpass.getpass("Ingrese la clave: ")
