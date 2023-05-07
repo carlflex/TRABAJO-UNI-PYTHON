@@ -12,6 +12,7 @@ rubro_menor=""
 rubro_mayor=""
 mayor=0
 menor=0
+limit=2
 
 #Funcion de construccion
 def coming_soon():
@@ -55,7 +56,7 @@ def menuMain():
 
 def CreacionLocal():
 
-    global count_perfumeria,count_indumentaria,count_comida,rubro_mayor,rubro_menor,mayor,menor
+    global count_perfumeria,count_indumentaria,count_comida,rubro_mayor,rubro_menor,mayor,menor,limit
     
     nombreLocal= input("Ingrese el nombre: ")
     ubicacionLocal=input("Ingrese la ubicacion: ")
@@ -106,12 +107,24 @@ def CreacionLocal():
         print(f"El rubro de {rubro_menor}, con un total de: {menor} locales") 
         print("---------------------------\n")
     else:
-        print("Los rubros tienen la misma cantidad de locales")    
+        print(f"Los rubros tienen la misma cantidad de locales, con {count_indumentaria}")   
+
+    limit-=1
+    print(f"Espacio disponibles para establecimientos: {limit} ") 
+
+def limit_local():
+    global limit
+
+    if limit != 0:
+        CreacionLocal()
+    else:
+        print("--------------------------------")
+        print("No hay espacio para mas locales")
+        print("--------------------------------")
 
 #Funcion del menu de locales           
-def menu_local():
+def menu_local(): 
     end=True
-    
     while end:
         print("---------------------------")
         print("GESTION DE LOCALES")
@@ -129,7 +142,7 @@ def menu_local():
 
         match action:
             case "a":
-                CreacionLocal()
+                limit_local()
             case "b":
                 coming_soon()
                 
