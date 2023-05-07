@@ -12,7 +12,7 @@ rubro_menor=""
 rubro_mayor=""
 mayor=0
 menor=0
-limit=2
+limit=20
 
 #Funcion de construccion
 def coming_soon():
@@ -114,7 +114,7 @@ def CreacionLocal():
         print(f"Los rubros tienen la misma cantidad de locales, con {count_indumentaria}")   
 
     limit-=1
-    print(f"Espacio disponibles para establecimientos: {limit} ") 
+    print(f"Espacio disponible: {limit} ") 
 
 def limit_local():
     global limit
