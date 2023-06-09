@@ -1,5 +1,4 @@
 import getpass
-import os
 #Integrantes:
 #Gugliermino Carlos
 #Teo Valentin Garcia Queipo
@@ -20,13 +19,6 @@ mayor=0
 menor=0
 limit=20
 
-ar_base=[
-    [],
-    [],
-    [],
-    []
-]
-#funciones de utilidad
 def ar_index(array,elemento,largo):
     for i in range(largo):
         if array[i]== elemento:
@@ -43,29 +35,67 @@ def ar_orden(array,largo):
                 array[j+1]=temp
     return array
 
-def limpiar_pantalla():
-    os.system("cls")
-#---------------------------
 #Funcion de construccion
 def coming_soon():
     print("\n---------------------")
     print("EN CONSTRUCCION")
     print("---------------------\n")
 
+#Funcion del menu principal
+def menuMain():
+
+   end=True
+   while end:
+        print("\n---------------------")
+        print("1. Gestion de locales")
+        print("2. Crear cuentas de dueños locales")
+        print("3. Aprobar / Denegar solicitud de descuento")
+        print("4. Gestion de Novedades")
+        print("5. Reporte de utilización de descuentos")
+        print("0. Salir")
+        print("---------------------\n")
+        
+        action= input("Ingrese una opcion: ")
+        while ((action!="1") and (action!="2") and (action!="3") and (action!="4") and (action!="5") and (action!="0")):
+            print("Opcion no valida")
+            action= input("Ingrese una opcion: ")
+
+        match action:
+            case "1":
+                menu_local()
+            case "2":
+                coming_soon()
+            case "3":
+                coming_soon()
+            case "4":
+                menu_novedades()
+            case "5":
+                coming_soon()
+            case "0":
+                end=False
+                print("SALIENDO DEL SCRIPT")
 
 def DecisionMayor_Menor():
     global count_perfumeria,count_indumentaria,count_comida,rubro_mayor,rubro_menor,mayor,menor
+    if (count_comida > count_perfumeria) and (count_comida > count_indumentaria):
+        mayor=count_comida
+        rubro_mayor="comida"
+    elif (count_perfumeria > count_comida) and (count_perfumeria > count_indumentaria):
+        mayor=count_perfumeria
+        rubro_mayor="perfumeria"
+    elif (count_indumentaria > count_comida) and (count_indumentaria > count_perfumeria):
+        mayor=count_indumentaria
+        rubro_mayor="indumentaria"
 
-    ar_contadores=[count_indumentaria,count_comida,count_perfumeria]
-    ar_nombres=["indumentaria","comida","perfumeria"]
-
-    ar_copia_orden=ar_contadores.copy()
-    ar_copia_orden=ar_orden(ar_copia_orden,3)
-
-    rubro_mayor=ar_nombres[ar_index(ar_contadores,ar_copia_orden[-1],3)]
-    rubro_menor=ar_nombres[ar_index(ar_contadores,ar_copia_orden[0],3)]
-    mayor=ar_copia_orden[-1]
-    menor=ar_copia_orden[0]
+    if (count_comida <= count_perfumeria) and (count_comida <= count_indumentaria):
+        menor=count_comida
+        rubro_menor="comida"
+    elif (count_perfumeria <= count_comida) and (count_perfumeria <= count_indumentaria):
+        menor=count_perfumeria
+        rubro_menor="perfumeria"
+    elif (count_indumentaria <= count_comida) and (count_indumentaria <= count_perfumeria):
+        menor=count_indumentaria
+        rubro_menor="indumentaria"
 
 def CreacionLocal():
 
@@ -184,42 +214,6 @@ def menu_novedades():
             case "e":
                 end=False
 
-#Funcion del menu principal
-def menuMain():
-
-   end=True
-   while end:
-        print("\n---------------------")
-        print("1. Gestion de locales")
-        print("2. Crear cuentas de dueños locales")
-        print("3. Aprobar / Denegar solicitud de descuento")
-        print("4. Gestion de Novedades")
-        print("5. Reporte de utilización de descuentos")
-        print("0. Salir")
-        print("---------------------\n")
-        
-        action= input("Ingrese una opcion: ")
-        while ((action!="1") and (action!="2") and (action!="3") and (action!="4") and (action!="5") and (action!="0")):
-            print("Opcion no valida")
-            action= input("Ingrese una opcion: ")
-
-        match action:
-            case "1":
-                limpiar_pantalla()
-                menu_local()
-            case "2":
-                limpiar_pantalla()
-                coming_soon()
-            case "3":
-                limpiar_pantalla()
-                coming_soon()
-            case "4":
-                menu_novedades()
-            case "5":
-                coming_soon()
-            case "0":
-                end=False
-                print("SALIENDO DEL SCRIPT")
 #Funcion de inicio del programa
 def failLogin():
     global strike,nombreUsuario,claveUsuario
@@ -252,8 +246,6 @@ claveUsuario=getpass.getpass("Ingrese la clave: ")
 print("-----------------------------------------\n")
 
 if (nombreUsuario==admin) and (claveUsuario==clave):
-    input()
-    limpiar_pantalla()
     print("Bienvenido")
     menuMain()
 else:
