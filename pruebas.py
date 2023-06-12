@@ -38,3 +38,18 @@ ar_copy=ar_orden(ar_copy,3)
 """ print(ar_n[ar_c.index(ar_copy[0])]) """
 
 print(ar_n[ar_index(ar_c,ar_copy[-1],3)])
+
+ar=[1,2,3,4,5,6,7,8,9,10,11,12]
+c1=0
+c2=1
+c3=2
+for i in range(4):
+    print("+-"*4+"+")
+    print(f"|{ar[c1]}||{ar[c2]}||{ar[c3]}|")
+
+    if i <5:
+        c1+=3
+        c2+=3
+        c3+=3
+print("+-"*4+"+")
+        

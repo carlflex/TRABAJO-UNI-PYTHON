@@ -7,9 +7,7 @@ import os
 #Lucas Colalongo
 
 #Variables globales
-admin="admin@shopping.com"
-clave="12345"
-strike=2
+strike=3
 
 count_indumentaria=0
 count_perfumeria=0
@@ -18,14 +16,29 @@ rubro_menor=""
 rubro_mayor=""
 mayor=0
 menor=0
-limit=20
+limite=50
+
+cod_local=1
+local_indice=0
 
 ar_base=[
+    [0,"admin@shopping.com","12345","administrador"],
+    [1,"localA@shopping.com","AAAA1111","dueñoLocal"],
+    [2,"localB@shopping.com","BBBB2222","dueñoLocal"],
+    [3,"unCliente@shopping.com","33xx33","cliente"]
+]
+
+ar_locales=[
     [],
     [],
     [],
     []
 ]
+
+for i in range(51):
+    ar_locales[0].append("")
+    ar_locales[3].append(0)
+
 #funciones de utilidad
 def ar_index(array,elemento,largo):
     for i in range(largo):
@@ -33,7 +46,7 @@ def ar_index(array,elemento,largo):
             return i
     return None
 
-def ar_orden(array,largo):
+def ar_orden(array,largo,nivel="normal"):
 
     for i in range(1,largo):
         for j in range(largo-i):
@@ -51,10 +64,12 @@ def coming_soon():
     print("\n---------------------")
     print("EN CONSTRUCCION")
     print("---------------------\n")
+    input()
+    limpiar_pantalla()
 
 
 def DecisionMayor_Menor():
-    global count_perfumeria,count_indumentaria,count_comida,rubro_mayor,rubro_menor,mayor,menor
+    global count_perfumeria,count_indumentaria,count_comida
 
     ar_contadores=[count_indumentaria,count_comida,count_perfumeria]
     ar_nombres=["indumentaria","comida","perfumeria"]
@@ -67,9 +82,10 @@ def DecisionMayor_Menor():
     mayor=ar_copia_orden[-1]
     menor=ar_copia_orden[0]
 
+    return [[rubro_menor,rubro_mayor],[menor,mayor]]
 def CreacionLocal():
 
-    global count_perfumeria,count_indumentaria,count_comida,rubro_mayor,rubro_menor,mayor,menor,limit
+    global count_perfumeria,count_indumentaria,count_comida,limite,cod_local,local_indice
     
     nombreLocal= input("Ingrese el nombre: ")
     ubicacionLocal=input("Ingrese la ubicacion: ")
@@ -79,7 +95,12 @@ def CreacionLocal():
     while(rubroLocal!="indumentaria") and (rubroLocal!="comida") and (rubroLocal!="perfumeria"):
         print("El rubro no existe, tiene estas opciones: indumentaria, perfumeria, comida")
         rubroLocal=input("Ingrese el rubro: ")
-                    
+
+    ar_locales[0][local_indice]=nombreLocal
+    ar_locales[1].append(ubicacionLocal)
+    ar_locales[3][local_indice]=cod_local
+    cod_local+=1
+
     match rubroLocal:
         case "indumentaria":
             count_indumentaria+=1
@@ -88,7 +109,7 @@ def CreacionLocal():
         case "perfumeria":
             count_perfumeria+=1
 
-    DecisionMayor_Menor()
+    datos=DecisionMayor_Menor()
                   
     print("---------------------------")
     print(f"Se a creado con exito el local {nombreLocal} en la ubicacion {ubicacionLocal}")
@@ -96,31 +117,43 @@ def CreacionLocal():
 
     if (count_indumentaria != count_comida) or (count_indumentaria != count_perfumeria) or (count_comida != count_perfumeria):
         print("Rubro con mas locales")
-        print(f"El rubro de {rubro_mayor}, con un total de: {mayor} locales") 
+        print(f"El rubro de {datos[0][1]}, con un total de: {datos[1][1]} locales") 
         print("---------------------------")
         print("Rubro con menos locales")
-        print(f"El rubro de {rubro_menor}, con un total de: {menor} locales") 
+        print(f"El rubro de {datos[0][0]}, con un total de: {datos[1][0]} locales") 
         print("---------------------------\n")
     else:
         print(f"Los rubros tienen la misma cantidad de locales, con {count_indumentaria}")   
 
-    limit-=1
-    print(f"Espacio disponible: {limit} ") 
+    limite-=1
+    print(f"Espacio disponible: {limite} ") 
 
-def limit_local():
-    global limit
+def limite_local():
+    global limite
 
-    if limit != 0:
+    if limite != 0:
         CreacionLocal()
     else:
         print("--------------------------------")
         print("No hay espacio para mas locales")
         print("--------------------------------")
 
+def mapa_local():
+    global ar_locales
+    limpiar_pantalla()
+
+    c1=0
+    for i in range(10):
+        print("+-"*5+"+")
+        print(f"|{ar_locales[3][c1]}|{ar_locales[3][c1+1]}|{ar_locales[3][c1+2]}|{ar_locales[3][c1+3]}|{ar_locales[3][c1+4]}|")
+        c1+=5
+    print("+-"*5+"+")
+
+mapa_local()
 #Funcion del menu de locales           
 def menu_local(): 
-    end=True
-    while end:
+    fin=True
+    while fin:
         print("---------------------------")
         print("GESTION DE LOCALES")
         print("---------------------------\n")
@@ -128,31 +161,33 @@ def menu_local():
         print("a) Crear locales")
         print("b) Modificar local")
         print("c) Eliminar locales")
-        print("d) Volver")
+        print("d) Mapa de locales")
+        print("e) Volver")
 
-        action= input("Ingrese una opcion: ")
-        while ((action!="a") and (action!="b") and (action!="c") and (action!="d")):
+        accion= input("Ingrese una opcion: ")
+        while ((accion!="a") and (accion!="b") and (accion!="c") and (accion!="d")):
             print("Opcion no valida")
-            action= input("Ingrese una opcion: ")
+            accion= input("Ingrese una opcion: ")
 
-        match action:
+        match accion:
             case "a":
-                limit_local()
+                limite_local()
             case "b":
                 coming_soon()
                 
             case "c":
                 coming_soon()
-                
             case "d":
-                end=False
+                mapa_local()
+            case "e":
+                fin=False
 
 #Funcion del menu de novedades
 def menu_novedades():
 
-    end=True
+    fin=True
     
-    while end:
+    while fin:
         print("\n---------------------------")
         print("GESTION DE NOVEDADES")
         print("---------------------------")
@@ -163,12 +198,12 @@ def menu_novedades():
         print("d) Ver reporte de novedades")
         print("e) Volver")
 
-        action= input("Ingrese una opcion: ")
-        while ((action!="a") and (action!="b") and (action!="c") and (action!="d") and (action!="e")):
+        accion= input("Ingrese una opcion: ")
+        while ((accion!="a") and (accion!="b") and (accion!="c") and (accion!="d") and (accion!="e")):
             print("Opcion no valida")
-            action=input("Ingrese una opcion: ")
+            accion=input("Ingrese una opcion: ")
 
-        match action:
+        match accion:
             case "a":
                 coming_soon()
                 
@@ -182,13 +217,12 @@ def menu_novedades():
                 coming_soon()
                 
             case "e":
-                end=False
+                fin=False
 
 #Funcion del menu principal
-def menuMain():
-
-   end=True
-   while end:
+def menuAdmin():
+   fin=True
+   while fin:
         print("\n---------------------")
         print("1. Gestion de locales")
         print("2. Crear cuentas de dueños locales")
@@ -198,12 +232,12 @@ def menuMain():
         print("0. Salir")
         print("---------------------\n")
         
-        action= input("Ingrese una opcion: ")
-        while ((action!="1") and (action!="2") and (action!="3") and (action!="4") and (action!="5") and (action!="0")):
+        accion= input("Ingrese una opcion: ")
+        while ((accion!="1") and (accion!="2") and (accion!="3") and (accion!="4") and (accion!="5") and (accion!="0")):
             print("Opcion no valida")
-            action= input("Ingrese una opcion: ")
+            accion= input("Ingrese una opcion: ")
 
-        match action:
+        match accion:
             case "1":
                 limpiar_pantalla()
                 menu_local()
@@ -218,45 +252,125 @@ def menuMain():
             case "5":
                 coming_soon()
             case "0":
-                end=False
-                print("SALIENDO DEL SCRIPT")
+                fin=False
+                print("SALIENDO DEL PROGRAMA")
+
+def menuDueño():
+   fin=True
+   while fin:
+        print("\n---------------------")
+        print("1. Gestión de Descuentos")
+        print("   a) Crear descuento para mi local")
+        print("   b) Modificar descuento de mi local")
+        print("   c) Eliminar descuento de mi local")
+        print("   d) Volver")
+        print("2. Aceptar / Rechazar pedido de descuento")
+        print("3. Reporte de uso de descuentos")
+        print("0. Salir")
+        print("---------------------\n")
+        
+        accion= input("Ingrese una opcion: ")
+        while ((accion!="1") and (accion!="2") and (accion!="3") and (accion!="0")):
+            print("Opcion no valida")
+            accion= input("Ingrese una opcion: ")
+
+        match accion:
+            case "1":
+                GestionDesc()
+            case "2":
+                limpiar_pantalla()
+                coming_soon()
+            case "3":
+                limpiar_pantalla()
+                coming_soon()
+            case "0":
+                fin=False
+                print("SALIENDO DEL PROGRAMA")
+
+def GestionDesc():
+    fin=True
+    while fin:
+        accion= input("Ingrese una opcion: ")
+        while ((accion!="a") and (accion!="b") and (accion!="c") and (accion!="d")):
+            print("Opcion no valida")
+            accion= input("Ingrese una opcion: ")
+
+        match accion:
+            case "a":
+                coming_soon()
+            case "b":
+                coming_soon()
+            case "c":
+                coming_soon()
+            case "d":
+                limpiar_pantalla()
+                fin=False
+
+def menuCliente():
+   fin=True
+   while fin:
+        print("\n---------------------")
+        print("1. Registrarme")
+        print("2. Buscar descuentos en locales")
+        print("3. Solicitar descuento")
+        print("4. Ver novedades")
+        print("0. Salir")
+        print("---------------------\n")
+        
+        accion= input("Ingrese una opcion: ")
+        while ((accion!="1") and (accion!="2") and (accion!="3") and (accion!="4") and (accion!="0")):
+            print("Opcion no valida")
+            accion= input("Ingrese una opcion: ")
+
+        match accion:
+            case "1":
+                limpiar_pantalla()
+                coming_soon()
+            case "2":
+                limpiar_pantalla()
+                coming_soon()
+            case "3":
+                limpiar_pantalla()
+                coming_soon()
+            case "4":
+                limpiar_pantalla()
+                coming_soon()
+            case "0":
+                fin=False
+                print("SALIENDO DEL PROGRAMA")
+                
 #Funcion de inicio del programa
 def failLogin():
-    global strike,nombreUsuario,claveUsuario
+    global nombreUsuario,claveUsuario
     
-    chek=False
-    while(strike!=0):
-        print(strike, "Intentos")
-        print("-----------------------------------------")
-        nombreUsuario=input("Ingrese el usuario: ")
-        claveUsuario=getpass.getpass("Ingrese la contraseña: ")
-        print("-----------------------------------------")
-        if (nombreUsuario==admin) and (claveUsuario==clave):
-            print("Ingreso exitoso")
-            print("-----------------------------------------\n")
-            strike=0
-            chek=True
-            menuMain()
-        else:
-            print("Usuario o contraseña incorrecto")
-            print("-----------------------------------------")
-            strike-=1
-
-    if  not chek:
-        print("Ya no se permiten mas intentos")
-        print("-----------------------------------------\n")
-  
+    for i in range(4):
+        print(i)
+        if nombreUsuario==ar_base[i][1] and claveUsuario== ar_base[i][2]:
+            return [True,ar_base[i][3]]
+    
+    return [False]
 #Programa Principal
 nombreUsuario=input("Ingrese el usuario: ")
 claveUsuario=getpass.getpass("Ingrese la clave: ")
 print("-----------------------------------------\n")
 
-if (nombreUsuario==admin) and (claveUsuario==clave):
-    input()
-    limpiar_pantalla()
-    print("Bienvenido")
-    menuMain()
-else:
-    print("Usuario o contraseña incorrecto")
-    print("-----------------------------------------\n") 
-    failLogin()
+while(strike!=0):
+    check=failLogin()
+    if check[0]:
+        print("Ingreso exitoso")
+        print("-----------------------------------------\n")
+        strike=0   
+        match check[1]:
+            case "administrador":
+                menuAdmin()
+            case "dueñoLocal":
+                menuDueño()
+            case "cliente":
+                menuCliente()
+    else:
+        strike-=1
+        print("Usuario o contraseña incorrecto")
+        print("-----------------------------------------\n")
+        print(strike)
+        nombreUsuario=input("Ingrese el usuario: ")
+        claveUsuario=getpass.getpass("Ingrese la clave: ")   
