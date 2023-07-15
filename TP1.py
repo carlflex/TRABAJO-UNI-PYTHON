@@ -17,17 +17,19 @@ rubro_mayor=""
 mayor=0
 menor=0
 limite=50
-
+tipo_user=""
 cod_local=1
 local_indice=0
 
 ar_base=[
-    [0,"admin@shopping.com","12345","administrador"],
-    [1,"localA@shopping.com","AAAA1111","dueñoLocal"],
-    [2,"localB@shopping.com","BBBB2222","dueñoLocal"],
-    [3,"unCliente@shopping.com","33xx33","cliente"]
+    ["admin@shopping.com","12345","administrador"],
+    ["localA@shopping.com","AAAA1111","dueñoLocal"],
+    ["localB@shopping.com","BBBB2222","dueñoLocal"],
+    ["unCliente@shopping.com","33xx33","cliente"]
 ]
 
+ar=[434]
+ar2=[3243]
 ar_locales=[
     [],
     [],
@@ -69,7 +71,7 @@ def coming_soon():
 
 
 def DecisionMayor_Menor():
-    global count_perfumeria,count_indumentaria,count_comida
+    global count_perfumeria,count_indumentaria,count_comida,mayor,menor
 
     ar_contadores=[count_indumentaria,count_comida,count_perfumeria]
     ar_nombres=["indumentaria","comida","perfumeria"]
@@ -82,10 +84,10 @@ def DecisionMayor_Menor():
     mayor=ar_copia_orden[-1]
     menor=ar_copia_orden[0]
 
-    return [[rubro_menor,rubro_mayor],[menor,mayor]]
+    return [rubro_menor,rubro_mayor]
 def CreacionLocal():
 
-    global count_perfumeria,count_indumentaria,count_comida,limite,cod_local,local_indice
+    global count_perfumeria,count_indumentaria,count_comida,limite,cod_local,local_indice,mayor,menor
     
     nombreLocal= input("Ingrese el nombre: ")
     ubicacionLocal=input("Ingrese la ubicacion: ")
@@ -117,10 +119,10 @@ def CreacionLocal():
 
     if (count_indumentaria != count_comida) or (count_indumentaria != count_perfumeria) or (count_comida != count_perfumeria):
         print("Rubro con mas locales")
-        print(f"El rubro de {datos[0][1]}, con un total de: {datos[1][1]} locales") 
+        print(f"El rubro de {datos[1]}, con un total de: {mayor} locales") 
         print("---------------------------")
         print("Rubro con menos locales")
-        print(f"El rubro de {datos[0][0]}, con un total de: {datos[1][0]} locales") 
+        print(f"El rubro de {datos[0]}, con un total de: {menor} locales") 
         print("---------------------------\n")
     else:
         print(f"Los rubros tienen la misma cantidad de locales, con {count_indumentaria}")   
@@ -341,14 +343,16 @@ def menuCliente():
                 
 #Funcion de inicio del programa
 def failLogin():
-    global nombreUsuario,claveUsuario
+    global nombreUsuario,claveUsuario,tipo_user
+    ppe=False
     
     for i in range(4):
         print(i)
-        if nombreUsuario==ar_base[i][1] and claveUsuario== ar_base[i][2]:
-            return [True,ar_base[i][3]]
+        if nombreUsuario==ar_base[i][0] and claveUsuario== ar_base[i][1]:
+            tipo_user=ar_base[i][2]
+            ppe=True
     
-    return [False]
+    return ppe
 #Programa Principal
 nombreUsuario=input("Ingrese el usuario: ")
 claveUsuario=getpass.getpass("Ingrese la clave: ")
@@ -356,11 +360,11 @@ print("-----------------------------------------\n")
 
 while(strike!=0):
     check=failLogin()
-    if check[0]:
+    if check:
         print("Ingreso exitoso")
         print("-----------------------------------------\n")
         strike=0   
-        match check[1]:
+        match tipo_user:
             case "administrador":
                 menuAdmin()
             case "dueñoLocal":
