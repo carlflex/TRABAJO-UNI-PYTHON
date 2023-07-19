@@ -1,10 +1,11 @@
 import getpass
 import os
+from colorama import init
+init()
 #Integrantes:
 #Gugliermino Carlos
 #Teo Valentin Garcia Queipo
 #Franco Zariaga
-#Lucas Colalongo
 
 #Variables globales
 strike=3
@@ -28,18 +29,24 @@ ar_base=[
     ["unCliente@shopping.com","33xx33","cliente"]
 ]
 
-ar=[434]
-ar2=[3243]
-ar_locales=[
-    [],
-    [],
-    [],
-    []
-]
+ar_codigos=[1,4,6,9]
 
-for i in range(51):
+""" ar_locales=[
+    [], #Nombre
+    [], #Ubicacion
+    [], #Rubro
+    [], #Codigo de usuario
+    [], #Codigo local
+    []  #Estado
+] """
+
+ar_locales=[["" for j in range(6)] for i in range(51)]
+
+""" for i in range(51):
     ar_locales[0].append("")
     ar_locales[3].append(0)
+    ar_locales.append([]) """
+
 
 #funciones de utilidad
 def ar_index(array,elemento,largo):
@@ -60,7 +67,49 @@ def ar_orden(array,largo,nivel="normal"):
 
 def limpiar_pantalla():
     os.system("cls")
+
 #---------------------------
+# Funciones de validacion
+def valid_codigo_usuario(cod):
+    
+    valid=True
+    ind=0
+
+    while  (ind <= 2) and (ar_codigos[ind]!=cod) :
+        ind+=1
+    
+    if ar_codigos[ind]==cod:
+        if ar_base[ind][2]=="dueñoLocal":
+            valid=False
+        else:
+            print("Usted no es dueño \n")
+    else:
+        print("codigo incorrecto  \n")
+    
+    return valid
+    """ for i in range(4):
+        print(ar_codigos[i])
+        if ar_codigos[i]==cod:
+            if ar_base[i][2]=="dueñoLocal":
+                valid=False
+            else:
+                print("Usted no es dueño")
+        else:
+            print("codigo incorrecto  \n")
+
+    return valid """       
+
+def val_datos_local(data,ar,largo):
+
+    ind=0
+    while  (ind <= largo-1) and data !=ar[ind]:
+        ind+=1
+    
+    """ if ar[ind]==data:
+        re """
+
+#----------------
+
 #Funcion de construccion
 def coming_soon():
     print("\n---------------------")
@@ -69,7 +118,7 @@ def coming_soon():
     input()
     limpiar_pantalla()
 
-
+#Funcion del menu de locales   
 def DecisionMayor_Menor():
     global count_perfumeria,count_indumentaria,count_comida,mayor,menor
 
@@ -86,49 +135,72 @@ def DecisionMayor_Menor():
 
     return [rubro_menor,rubro_mayor]
 def CreacionLocal():
-
     global count_perfumeria,count_indumentaria,count_comida,limite,cod_local,local_indice,mayor,menor
-    
+   
     nombreLocal= input("Ingrese el nombre: ")
-    ubicacionLocal=input("Ingrese la ubicacion: ")
-    rubroLocal=input("Ingrese el rubro: ")
-    print("-----------------------------------\n")
 
-    while(rubroLocal!="indumentaria") and (rubroLocal!="comida") and (rubroLocal!="perfumeria"):
-        print("El rubro no existe, tiene estas opciones: indumentaria, perfumeria, comida")
+    while nombreLocal !="*":
+        ubicacionLocal=input("Ingrese la ubicacion: ")
         rubroLocal=input("Ingrese el rubro: ")
 
-    ar_locales[0][local_indice]=nombreLocal
-    ar_locales[1].append(ubicacionLocal)
-    ar_locales[3][local_indice]=cod_local
-    cod_local+=1
+        while(rubroLocal!="indumentaria") and (rubroLocal!="comida") and (rubroLocal!="perfumeria"):
+            print("El rubro no existe, tiene estas opciones: indumentaria, perfumeria, comida")
+            rubroLocal=input("Ingrese el rubro: ")
 
-    match rubroLocal:
-        case "indumentaria":
-            count_indumentaria+=1
-        case "comida":
-            count_comida+=1
-        case "perfumeria":
-            count_perfumeria+=1
+        cod_user=int(input("Ingrese el codigo: "))
+        print("-----------------------------------\n")
+        
+        while valid_codigo_usuario(cod_user):
+            cod_user=int(input("Ingrese el codigo: "))
 
-    datos=DecisionMayor_Menor()
-                  
-    print("---------------------------")
-    print(f"Se a creado con exito el local {nombreLocal} en la ubicacion {ubicacionLocal}")
-    print("---------------------------")
+        match rubroLocal:
+            case "indumentaria":
+                count_indumentaria+=1
+            case "comida":
+                count_comida+=1
+            case "perfumeria":
+                count_perfumeria+=1
 
-    if (count_indumentaria != count_comida) or (count_indumentaria != count_perfumeria) or (count_comida != count_perfumeria):
-        print("Rubro con mas locales")
-        print(f"El rubro de {datos[1]}, con un total de: {mayor} locales") 
+        datos=DecisionMayor_Menor()
+                    
         print("---------------------------")
-        print("Rubro con menos locales")
-        print(f"El rubro de {datos[0]}, con un total de: {menor} locales") 
-        print("---------------------------\n")
-    else:
-        print(f"Los rubros tienen la misma cantidad de locales, con {count_indumentaria}")   
+        print(f"Se a creado con exito el local {nombreLocal} en la ubicacion {ubicacionLocal}")
+        print("---------------------------")
 
+        ar_locales[cod_local-1][0]=nombreLocal
+        ar_locales[cod_local-1][1]=ubicacionLocal
+        ar_locales[cod_local-1][2]=rubroLocal
+        ar_locales[cod_local-1][3]=str(cod_user)
+        ar_locales[cod_local-1][4]=str(cod_local)
+        ar_locales[cod_local-1][5]='A'
+        cod_local+=1
+        if (count_indumentaria != count_comida) or (count_indumentaria != count_perfumeria) or (count_comida != count_perfumeria):
+            print("Rubro con mas locales")
+            print(f"El rubro de {datos[1]}, con un total de: {mayor} locales") 
+            print("---------------------------")
+            print("Rubro con menos locales")
+            print(f"El rubro de {datos[0]}, con un total de: {menor} locales") 
+            print("---------------------------\n")
+        else:
+            print(f"Los rubros tienen la misma cantidad de locales, con {count_indumentaria}")
+        input()
+        limpiar_pantalla()
+        print(ar_locales)
+        nombreLocal= input("Ingrese el nombre: ")   
+
+    limpiar_pantalla()
     limite-=1
     print(f"Espacio disponible: {limite} ") 
+
+def mod_local():
+    global ar_locales
+
+    input_cod_local=int(input("Ingrese el codigo del local que desea modificar: \n"))
+
+    #validar que exista
+
+
+
 
 def limite_local():
     global limite
@@ -151,8 +223,8 @@ def mapa_local():
         c1+=5
     print("+-"*5+"+")
 
-mapa_local()
-#Funcion del menu de locales           
+
+#----------------------------------------------        
 def menu_local(): 
     fin=True
     while fin:
@@ -167,12 +239,13 @@ def menu_local():
         print("e) Volver")
 
         accion= input("Ingrese una opcion: ")
-        while ((accion!="a") and (accion!="b") and (accion!="c") and (accion!="d")):
+        while ((accion!="a") and (accion!="b") and (accion!="c") and (accion!="d") and (accion!="e")):
             print("Opcion no valida")
             accion= input("Ingrese una opcion: ")
 
         match accion:
             case "a":
+                limpiar_pantalla()
                 limite_local()
             case "b":
                 coming_soon()
@@ -347,12 +420,13 @@ def failLogin():
     ppe=False
     
     for i in range(4):
-        print(i)
+        
         if nombreUsuario==ar_base[i][0] and claveUsuario== ar_base[i][1]:
             tipo_user=ar_base[i][2]
             ppe=True
     
     return ppe
+
 #Programa Principal
 nombreUsuario=input("Ingrese el usuario: ")
 claveUsuario=getpass.getpass("Ingrese la clave: ")

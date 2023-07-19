@@ -1,3 +1,5 @@
+import os
+
 anida=[
     [234,67,7],
     [2,35,6],
@@ -18,3 +20,5 @@ print(ar3)
 """ for i in range(4):
 
     if clave_usuario== ar[i] and usuario== ar2[i] """
+
+""" print(os.system("dir")) """
