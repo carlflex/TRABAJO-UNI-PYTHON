@@ -105,8 +105,8 @@ def val_datos_local(data,ar,largo):
     while  (ind <= largo-1) and data !=ar[ind]:
         ind+=1
     
-    """ if ar[ind]==data:
-        re """
+    if ar[ind]==data:
+        
 
 #----------------
 
@@ -417,15 +417,15 @@ def menuCliente():
 #Funcion de inicio del programa
 def failLogin():
     global nombreUsuario,claveUsuario,tipo_user
-    ppe=False
+    valid=False
     
     for i in range(4):
         
         if nombreUsuario==ar_base[i][0] and claveUsuario== ar_base[i][1]:
             tipo_user=ar_base[i][2]
-            ppe=True
+            valid=True
     
-    return ppe
+    return valid
 
 #Programa Principal
 nombreUsuario=input("Ingrese el usuario: ")
