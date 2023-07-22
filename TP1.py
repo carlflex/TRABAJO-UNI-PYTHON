@@ -20,7 +20,7 @@ menor=0
 limite=50
 tipo_user=""
 cod_local=1
-local_indice=0
+local_index=0
 
 ar_base=[
     ["admin@shopping.com","12345","administrador"],
@@ -35,25 +35,20 @@ ar_codigos=[1,4,6,9]
     [], #Nombre
     [], #Ubicacion
     [], #Rubro
-    [], #Codigo de usuario
-    [], #Codigo local
     []  #Estado
 ] """
 
-ar_locales=[["" for j in range(6)] for i in range(51)]
-
-""" for i in range(51):
-    ar_locales[0].append("")
-    ar_locales[3].append(0)
-    ar_locales.append([]) """
-
+ar_locales=[["" for j in range(4)] for i in range(51)]
+ar_locales_cod=[[0 for j in range(2)]for i in range(51)]
+print(ar_locales_cod)
 
 #funciones de utilidad
 def ar_index(array,elemento,largo):
+    ind=-1
     for i in range(largo):
         if array[i]== elemento:
-            return i
-    return None
+            inD=i
+    return ind
 
 def ar_orden(array,largo,nivel="normal"):
 
@@ -65,49 +60,69 @@ def ar_orden(array,largo,nivel="normal"):
                 array[j+1]=temp
     return array
 
+def ar_existe(array,largo,elemento):
+    ind=0
+
+    while (ind<largo) and (array[ind]!=elemento):
+        ind+=1
+
+    if array[ind]==elemento:
+        return True
+    else:
+        return False
+    
+
+
 def limpiar_pantalla():
     os.system("cls")
 
 #---------------------------
 # Funciones de validacion
-def valid_codigo_usuario(cod):
-    
-    valid=True
+def valid_codigo_usuario():
     ind=0
+    valid= True
+    cod=int(input("Ingrese el codigo: "))
 
-    while  (ind <= 2) and (ar_codigos[ind]!=cod) :
-        ind+=1
-    
-    if ar_codigos[ind]==cod:
-        if ar_base[ind][2]=="dueñoLocal":
-            valid=False
-        else:
-            print("Usted no es dueño \n")
-    else:
-        print("codigo incorrecto  \n")
-    
-    return valid
-    """ for i in range(4):
-        print(ar_codigos[i])
-        if ar_codigos[i]==cod:
-            if ar_base[i][2]=="dueñoLocal":
+    while valid: 
+        while  (ind <= 2) and (ar_codigos[ind]!=cod) :
+            ind+=1
+
+        if ar_codigos[ind]==cod:
+            if ar_base[ind][2]=="dueñoLocal":
                 valid=False
             else:
-                print("Usted no es dueño")
+                print("Usted no es dueño \n")
+                cod=int(input("Ingrese el codigo: "))
         else:
             print("codigo incorrecto  \n")
+            cod=int(input("Ingrese el codigo: "))
+    
+    return cod     
 
-    return valid """       
-
-def val_datos_local(data,ar,largo):
-
+def val_datos_local(data):
+    global ar_locales_cod,local_index
     ind=0
-    while  (ind <= largo-1) and data !=ar[ind]:
+    while  (ind < 49) and data !=ar_locales_cod[ind][1]:
         ind+=1
     
-    if ar[ind]==data:
-        
+    if ar_locales_cod[ind][1]==data:
+      local_index=ind
+      return True
+    else:
+        return False
 
+
+def val_opciones(ar,largo,error,mensaje):
+
+    opt=input(mensaje)
+
+    while not ar_existe(ar,largo,opt):
+        print(error)
+        opt=input(mensaje)
+    
+    return opt
+
+        
 #----------------
 
 #Funcion de construccion
@@ -117,6 +132,29 @@ def coming_soon():
     print("---------------------\n")
     input()
     limpiar_pantalla()
+
+def operar_contadores(rubro,tipo):
+    global count_comida,count_indumentaria,count_perfumeria
+
+    match tipo:
+        case "aumentar":
+            match rubro:
+                case "indumentaria":
+                    count_indumentaria+=1
+                case "comida":
+                    count_comida+=1
+                case "perfumeria":
+                    count_perfumeria+=1
+        case "restar":
+            match rubro:
+                case "indumentaria":
+                    count_indumentaria-=1
+                case "comida":
+                    count_comida-=1
+                case "perfumeria":
+                    count_perfumeria-=1
+            
+            
 
 #Funcion del menu de locales   
 def DecisionMayor_Menor():
@@ -128,38 +166,28 @@ def DecisionMayor_Menor():
     ar_copia_orden=ar_contadores.copy()
     ar_copia_orden=ar_orden(ar_copia_orden,3)
 
-    rubro_mayor=ar_nombres[ar_index(ar_contadores,ar_copia_orden[-1],3)]
+    rubro_mayor=ar_nombres[ar_index(ar_contadores,ar_copia_orden[2],3)]
     rubro_menor=ar_nombres[ar_index(ar_contadores,ar_copia_orden[0],3)]
-    mayor=ar_copia_orden[-1]
+    mayor=ar_copia_orden[2]
     menor=ar_copia_orden[0]
 
     return [rubro_menor,rubro_mayor]
 def CreacionLocal():
-    global count_perfumeria,count_indumentaria,count_comida,limite,cod_local,local_indice,mayor,menor
+    global count_perfumeria,count_indumentaria,count_comida,limite,cod_local,mayor,menor
    
     nombreLocal= input("Ingrese el nombre: ")
 
     while nombreLocal !="*":
         ubicacionLocal=input("Ingrese la ubicacion: ")
-        rubroLocal=input("Ingrese el rubro: ")
+        rubroLocal=val_opciones(["indumentaria","comida","perfumeria"],2,"El rubro no existe, tiene estas opciones: indumentaria, perfumeria, comida","Ingrese el rubro: ")
 
-        while(rubroLocal!="indumentaria") and (rubroLocal!="comida") and (rubroLocal!="perfumeria"):
+        """ while(rubroLocal!="indumentaria") and (rubroLocal!="comida") and (rubroLocal!="perfumeria"):
             print("El rubro no existe, tiene estas opciones: indumentaria, perfumeria, comida")
             rubroLocal=input("Ingrese el rubro: ")
-
-        cod_user=int(input("Ingrese el codigo: "))
-        print("-----------------------------------\n")
+ """
+        cod_user=valid_codigo_usuario()
         
-        while valid_codigo_usuario(cod_user):
-            cod_user=int(input("Ingrese el codigo: "))
-
-        match rubroLocal:
-            case "indumentaria":
-                count_indumentaria+=1
-            case "comida":
-                count_comida+=1
-            case "perfumeria":
-                count_perfumeria+=1
+        operar_contadores(rubroLocal,"aumentar")
 
         datos=DecisionMayor_Menor()
                     
@@ -170,9 +198,10 @@ def CreacionLocal():
         ar_locales[cod_local-1][0]=nombreLocal
         ar_locales[cod_local-1][1]=ubicacionLocal
         ar_locales[cod_local-1][2]=rubroLocal
-        ar_locales[cod_local-1][3]=str(cod_user)
-        ar_locales[cod_local-1][4]=str(cod_local)
-        ar_locales[cod_local-1][5]='A'
+        ar_locales[cod_local-1][3]='A'
+
+        ar_locales_cod[cod_local-1][0]=cod_user
+        ar_locales_cod[cod_local-1][1]=cod_local
         cod_local+=1
         if (count_indumentaria != count_comida) or (count_indumentaria != count_perfumeria) or (count_comida != count_perfumeria):
             print("Rubro con mas locales")
@@ -193,13 +222,48 @@ def CreacionLocal():
     print(f"Espacio disponible: {limite} ") 
 
 def mod_local():
+    global ar_locales,ar_locales_cod
+
+    input_cod_local=int(input("Ingrese el codigo del local que desea modificar: \n"))
+
+    while val_datos_local(input_cod_local):
+        print("Codigo no existe\n")
+        input_cod_local=int(input("Ingrese el codigo del local que desea modificar: \n"))
+
+    print("----------------------------------------------------------------------------------------------\n")
+    print(f"""Modificacion de datos del local:{input_cod_local}
+          alias:{ar_locales[local_index][0]}\n""")
+    print("---------------------------------------------------------------------------------------------------")
+    
+    nombreLocal= input("Ingrese el nombre: ")
+    ubicacionLocal=input("Ingrese la ubicacion: ")
+    rubroLocal=val_opciones(["indumentaria","comida","perfumeria"],2,"El rubro no existe, tiene estas opciones: indumentaria, perfumeria, comida","Ingrese el rubro: ")
+    cod_user=valid_codigo_usuario()
+
+    operar_contadores(ar_locales[local_index][2],"restar")
+    operar_contadores(rubroLocal,"aumentar")
+    ar_locales[local_index][0]=nombreLocal
+    ar_locales[local_index][1]=ubicacionLocal
+    ar_locales[local_index][2]=rubroLocal
+    ar_locales_cod[local_index][0]=cod_user
+
+def eliminar_local():
     global ar_locales
 
     input_cod_local=int(input("Ingrese el codigo del local que desea modificar: \n"))
 
-    #validar que exista
+    while val_datos_local(input_cod_local):
+        print("Codigo no existe\n")
+        input_cod_local=int(input("Ingrese el codigo del local que desea modificar: \n"))
 
+    print("===============================")
+    print("¿Desea dar de baja este local?")
+    print("===============================")
 
+    opcion=input("SI(s)/NO(N)")
+
+    if opcion =="s":
+        ar_locales[local_index][3]="B"
 
 
 def limite_local():
@@ -219,11 +283,12 @@ def mapa_local():
     c1=0
     for i in range(10):
         print("+-"*5+"+")
-        print(f"|{ar_locales[3][c1]}|{ar_locales[3][c1+1]}|{ar_locales[3][c1+2]}|{ar_locales[3][c1+3]}|{ar_locales[3][c1+4]}|")
+        print(f"|{ar_locales_cod[c1][0]}|{ar_locales_cod[c1+1][0]}|{ar_locales_cod[c1+2][0]}|{ar_locales_cod[c1+3][0]}|{ar_locales_cod[c1+4][0]}|")
         c1+=5
     print("+-"*5+"+")
 
 
+mapa_local()
 #----------------------------------------------        
 def menu_local(): 
     fin=True
@@ -238,10 +303,10 @@ def menu_local():
         print("d) Mapa de locales")
         print("e) Volver")
 
-        accion= input("Ingrese una opcion: ")
-        while ((accion!="a") and (accion!="b") and (accion!="c") and (accion!="d") and (accion!="e")):
+        accion= val_opciones(["a","b","c","d","e"],4,"Opcion no valida \n","\nIngrese una opcion: ")
+        """ while ((accion!="a") and (accion!="b") and (accion!="c") and (accion!="d") and (accion!="e")):
             print("Opcion no valida")
-            accion= input("Ingrese una opcion: ")
+            accion= input("Ingrese una opcion: ") """
 
         match accion:
             case "a":
@@ -365,11 +430,11 @@ def menuDueño():
 def GestionDesc():
     fin=True
     while fin:
-        accion= input("Ingrese una opcion: ")
-        while ((accion!="a") and (accion!="b") and (accion!="c") and (accion!="d")):
+        accion=val_opciones(["a","b","c","d"],3,"Opcion no valida \n","\nIngrese una opcion: ")
+        """ while ((accion!="a") and (accion!="b") and (accion!="c") and (accion!="d")):
             print("Opcion no valida")
             accion= input("Ingrese una opcion: ")
-
+ """
         match accion:
             case "a":
                 coming_soon()
