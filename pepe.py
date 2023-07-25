@@ -30,7 +30,7 @@ ar=[
 
 ar2=ar[:][:]
 
-print(ar2)
+
 """ def ar_existe(array,largo,elemento):
     ind=0
 
@@ -40,3 +40,15 @@ print(ar2)
     print(ind)
 
 ar_existe(ar,5,8) """
+
+""" for i in range (20):
+    print("| nomsdfsd | sfdsdf | sgfdgfgf |")
+    print("|"+"-"*(len("nomsdfsd")+2) +"|--------|----------|") """
+
+ar=[3,4,45,4,3,3]
+
+ar2=ar[:]
+
+ar.sort()
+
+print(ar,ar2)
