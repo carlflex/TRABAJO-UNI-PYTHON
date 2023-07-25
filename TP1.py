@@ -42,7 +42,7 @@ ar_codigos=[1,4,6,9]
     []  #Estado
 ] """
 
-ar_locales=[["" for j in range(3)] for i in range(50)]
+ar_locales=[[" " for j in range(3)] for i in range(50)]
 ar_locales_estado=["" for  k in range(50)]
 ar_locales_cod=[[0 for j in range(2)]for i in range(50)]
 
@@ -54,7 +54,7 @@ def ar_indice(arreglo,elemento,largo):
             ind=i
     return ind
 
-def ar_orden(arreglo,largo):
+def ar_orden(arreglo,largo,ar2):
 
     for i in range(1,largo):
         for j in range(largo-i):
@@ -62,7 +62,10 @@ def ar_orden(arreglo,largo):
                 temp=arreglo[j]
                 arreglo[j]=arreglo[j+1]
                 arreglo[j+1]=temp
-    return arreglo
+                temp2=ar2[j]
+                ar2[j]=ar2[j+1]
+                ar2[j+1]=temp2
+  
 
 def ar_existe(arreglo,largo,elemento):
     ind=0
@@ -101,7 +104,7 @@ def mostrar_Local():
     
     if verLocales=="1":
         limpiar_pantalla()
-        mostrar_tabla_loc(ar_locales)
+        mostrar_tabla_loc(ar_locales,ar_locales_estado)
         input()
         limpiar_pantalla()
     else:
@@ -112,21 +115,21 @@ def limpiar_pantalla():
 
 def orden_bi(arreglo,filas,columnas,co_orden):
     global ar_locales_cod,ar_locales_estado
-    for i in range(1,filas):
-        for j in range(filas-1):
-            if arreglo[i][co_orden]<arreglo[j][co_orden]:
+    for i in range(1,filas+1):
+        for j in range(filas-i):
+            if arreglo[j][co_orden][0]<arreglo[j+1][co_orden][0]:
                 for k in range(columnas):
-                    temp=arreglo[i][k]
-                    arreglo[i][k]=arreglo[j][k]
-                    arreglo[j][k]=temp
+                    temp=arreglo[j][k]
+                    arreglo[j][k]=arreglo[j+1][k]
+                    arreglo[j+1][k]=temp
                 for w in range(2):
-                    temp=ar_locales_cod[i][w]
-                    ar_locales_cod[i][w]=ar_locales_cod[j][w]
-                    ar_locales_cod[j][w]=temp
+                    temp=ar_locales_cod[j][w]
+                    ar_locales_cod[j][w]=ar_locales_cod[j+1][w]
+                    ar_locales_cod[j+1][w]=temp
                 temp=ar_locales_estado[j]
                 ar_locales_estado[j]=ar_locales_estado[j+1]
                 ar_locales_estado[j+1]=temp
-    return arreglo
+    
 
 def tiene_datos(arreglo):
     for dato in arreglo:
@@ -134,10 +137,10 @@ def tiene_datos(arreglo):
             return True
     return False
 
-def mostrar_tabla_loc(arreglo):
-    partes_definidas = [fila for fila in arreglo if tiene_datos(fila)]
+def mostrar_tabla_loc(arreglo1,arreglo2):
+    partes_definidas = [fila for fila in arreglo1 if tiene_datos(fila)]
     encabezados = [Fore.LIGHTMAGENTA_EX + "Nombre" + Fore.RESET, Fore.LIGHTMAGENTA_EX + "Ubicación" + Fore.RESET,  Fore.LIGHTMAGENTA_EX + "Rubro" + Fore.RESET, Fore.LIGHTMAGENTA_EX + "Estado" + Fore.RESET]
-    tabla = tabulate(partes_definidas, headers=encabezados, tablefmt="grid")
+    tabla = tabulate([partes_definidas[:][0],arreglo2[:]], headers=encabezados, tablefmt="grid")
     print(tabla)
 
 def mostrar_tabla_rub():
@@ -145,11 +148,12 @@ def mostrar_tabla_rub():
     
     ar_contadores=[cont_indumentaria,cont_comida,cont_perfumeria]
     ar_copia_orden=ar_contadores[:]
-    ar_copia_orden=ar_orden(ar_copia_orden,3)
+    ar_rubro_orden=ar_rubro[:]
+    ar_orden(ar_copia_orden,3,ar_rubro_orden)
 
-    rubro_mayor=ar_rubro[ar_indice(ar_contadores,ar_copia_orden[2],3)]
-    rubro_medio=ar_rubro[ar_indice(ar_contadores,ar_copia_orden[1],3)-2]
-    rubro_menor=ar_rubro[ar_indice(ar_contadores,ar_copia_orden[0],3)]
+    rubro_mayor=ar_rubro_orden[2]
+    rubro_medio=ar_rubro_orden[1]
+    rubro_menor=ar_rubro_orden[0]
 
     mayor=ar_copia_orden[2]
     medio=ar_copia_orden[1]
@@ -331,14 +335,14 @@ def CreacionLocal():
         
         carga_locales(ar_local_datos,ar_locales,cod_local-1,3)
         ar_locales_estado[cod_local-1]="A"
-        
         ar_locales_cod[cod_local-1][0]=cod_usuario
         ar_locales_cod[cod_local-1][1]=cod_local
         cod_local+=1
         mostrar_tabla_rub()
         input()
         limpiar_pantalla()
-        ar_locales=orden_bi(ar_locales,50,3,0)
+        orden_bi(ar_locales,50,3,0)
+        print(ar_locales)
         nombreLocal= val_nombre()
 
     limpiar_pantalla()
@@ -399,12 +403,12 @@ def mod_local():
                 operar_contadores(rubroLocal,"aumentar")
                 carga_locales([nombreLocal,ubicacionLocal,rubroLocal],ar_locales,local_indice,3)
                 ar_locales_cod[local_indice][0]=cod_usuario
-                ar_locales=orden_bi(ar_locales,50,4,0)
+                orden_bi(ar_locales,50,4,0)
             case "2":
                 limpiar_pantalla()
                 nombreLocal= val_nombre()
                 ar_locales[local_indice][0]=nombreLocal
-                ar_locales=orden_bi(ar_locales,50,4,0)
+                orden_bi(ar_locales,50,4,0)
             case "3":
                 limpiar_pantalla()
                 ubicacionLocal=input(Fore.LIGHTCYAN_EX + "Ingrese la ubicacion: " + Fore.RESET)

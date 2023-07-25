@@ -45,10 +45,12 @@ ar_existe(ar,5,8) """
     print("| nomsdfsd | sfdsdf | sgfdgfgf |")
     print("|"+"-"*(len("nomsdfsd")+2) +"|--------|----------|") """
 
-ar=[3,4,45,4,3,3]
+""" ar=[3,4,45,4,3,3]
 
 ar2=ar[:]
 
 ar.sort()
 
-print(ar,ar2)
+print(ar,ar2) """
+
+print(" "<"zkñ")
