@@ -11,14 +11,17 @@ init(autoreset=True)
 
 #Variables globales
 intentos=3
-
 cont_indumentaria=0
 cont_perfumeria=0
 cont_comida=0
+cantidadLoc=0
 limite=50
 tipo_usuario=""
 cod_local=1
 local_indice=0
+maxlen1=0
+maxlen2=0
+maxlen3=0
 
 ar_rubro=["indumentaria","comida","perfumeria"]
 
@@ -42,7 +45,7 @@ ar_codigos=[1,4,6,9]
     []  #Estado
 ] """
 
-ar_locales=[[" " for j in range(3)] for i in range(50)]
+ar_locales=[["   " for j in range(3)] for i in range(50)]
 ar_locales_estado=["" for  k in range(50)]
 ar_locales_cod=[[0 for j in range(2)]for i in range(50)]
 
@@ -104,44 +107,50 @@ def mostrar_Local():
     
     if verLocales=="1":
         limpiar_pantalla()
-        mostrar_tabla_loc(ar_locales,ar_locales_estado)
+        tablaLOC(ar_locales,ar_locales_estado,ar_locales_cod)
         input()
         limpiar_pantalla()
     else:
         limpiar_pantalla()
+
+def tablaLOC(ar1,ar2,ar3):
+    global cantidadLoc,maxlen1,maxlen2,maxlen3
+    if ar2[0]!="":
+        for i in range(cantidadLoc):
+            if maxlen1<len(ar1[i][0]):
+                maxlen1=len(ar1[i][0])
+            if maxlen2<len(ar1[i][1]):
+                maxlen2=len(ar1[i][1])
+            if maxlen3<len(ar1[i][2]):
+                maxlen3=len(ar1[i][2])
+    
+        for i in range(cantidadLoc):
+            if (ar2[i] == "A"):
+                print(Fore.LIGHTMAGENTA_EX + "| Nombre: " + Fore.RESET , f"{ar1[i][0]}"+" " *(maxlen1-len(ar1[i][0])), Fore.LIGHTMAGENTA_EX + "| Ubicación: " + Fore.RESET, f"{ar1[i][1]}"+" " *(maxlen2-len(ar1[i][1])), Fore.LIGHTMAGENTA_EX + "| Rubro: " + Fore.RESET , f"{ar1[i][2]}"+" " *(maxlen3-len(ar1[i][2])), Fore.LIGHTMAGENTA_EX + "| Codigo del usuario: " + Fore.RESET, ar3[i][0], Fore.LIGHTMAGENTA_EX + "| Codigo de local: " + Fore.RESET , ar3[i][1] , Fore.LIGHTMAGENTA_EX + "| Estado: " + Fore.RESET + "Activo" + Fore.LIGHTMAGENTA_EX + "   |")
+            elif(ar2[i] == "B"):
+                print(Fore.LIGHTMAGENTA_EX + "| Nombre: " + Fore.RESET , f"{ar1[i][0]}"+" " *(maxlen1-len(ar1[i][0])), Fore.LIGHTMAGENTA_EX + "| Ubicación: " + Fore.RESET, f"{ar1[i][1]}"+" " *(maxlen2-len(ar1[i][1])), Fore.LIGHTMAGENTA_EX + "| Rubro: " + Fore.RESET , f"{ar1[i][2]}"+" " *(maxlen3-len(ar1[i][2])), Fore.LIGHTMAGENTA_EX + "| Codigo del usuario: " + Fore.RESET, ar3[i][0], Fore.LIGHTMAGENTA_EX + "| Codigo de local: " + Fore.RESET , ar3[i][1] , Fore.LIGHTMAGENTA_EX + "| Estado: " + Fore.RESET + "Inactivo" + Fore.LIGHTMAGENTA_EX + " |")
+    else:
+        print(Fore.LIGHTYELLOW_EX + "No se encuentran locales cargados")
 
 def limpiar_pantalla():
     os.system("cls")
 
 def orden_bi(arreglo,filas,columnas,co_orden):
     global ar_locales_cod,ar_locales_estado
-    for i in range(1,filas+1):
-        for j in range(filas-i):
-            if arreglo[j][co_orden][0]<arreglo[j+1][co_orden][0]:
+    for i in range(filas-1):
+        for j in range(i+1,filas):
+            if arreglo[i][co_orden]>arreglo[j][co_orden] and arreglo[j][co_orden] !=" " :
                 for k in range(columnas):
-                    temp=arreglo[j][k]
-                    arreglo[j][k]=arreglo[j+1][k]
-                    arreglo[j+1][k]=temp
+                    temp=arreglo[i][k]
+                    arreglo[i][k]=arreglo[j][k]
+                    arreglo[j][k]=temp
                 for w in range(2):
-                    temp=ar_locales_cod[j][w]
-                    ar_locales_cod[j][w]=ar_locales_cod[j+1][w]
-                    ar_locales_cod[j+1][w]=temp
-                temp=ar_locales_estado[j]
-                ar_locales_estado[j]=ar_locales_estado[j+1]
-                ar_locales_estado[j+1]=temp
-    
-
-def tiene_datos(arreglo):
-    for dato in arreglo:
-        if dato != "":
-            return True
-    return False
-
-def mostrar_tabla_loc(arreglo1,arreglo2):
-    partes_definidas = [fila for fila in arreglo1 if tiene_datos(fila)]
-    encabezados = [Fore.LIGHTMAGENTA_EX + "Nombre" + Fore.RESET, Fore.LIGHTMAGENTA_EX + "Ubicación" + Fore.RESET,  Fore.LIGHTMAGENTA_EX + "Rubro" + Fore.RESET, Fore.LIGHTMAGENTA_EX + "Estado" + Fore.RESET]
-    tabla = tabulate([partes_definidas[:][0],arreglo2[:]], headers=encabezados, tablefmt="grid")
-    print(tabla)
+                    temp=ar_locales_cod[i][w]
+                    ar_locales_cod[i][w]=ar_locales_cod[j][w]
+                    ar_locales_cod[j][w]=temp
+                temp=ar_locales_estado[i]
+                ar_locales_estado[i]=ar_locales_estado[j]
+                ar_locales_estado[j]=temp
 
 def mostrar_tabla_rub():
     global cont_perfumeria,cont_indumentaria,cont_comida,ar_rubro
@@ -159,12 +168,12 @@ def mostrar_tabla_rub():
     medio=ar_copia_orden[1]
     menor=ar_copia_orden[0]
 
-    print("====================")
-    print("|" + Fore.LIGHTMAGENTA_EX + "Rubro" + Fore.RESET + "|" + Fore.LIGHTMAGENTA_EX + "Cantidad" + Fore.RESET + "|")
-    print("-------------------")
-    print(f"| {rubro_mayor} | {mayor} |")
-    print(f"| {rubro_medio} | {medio} |")
-    print(f"| {rubro_menor} | {menor} |")
+    print("===========================")
+    print("|" + Fore.LIGHTMAGENTA_EX + " Rubro " + Fore.RESET +" "*(len("indumentaria")-len("rubro"))+ "| " + Fore.LIGHTMAGENTA_EX + "Cantidad " + Fore.RESET + "|")
+    print("|--"+"-"*len("indumentaria")+"|----------|")
+    print(f"| {rubro_mayor} "+" "*(len("indumentaria")-len(rubro_mayor))+"|"+f"     {mayor}    |")
+    print(f"| {rubro_medio} "+" "*(len("indumentaria")-len(rubro_medio))+"|"+f"     {medio}    |")
+    print(f"| {rubro_menor} "+" "*(len("indumentaria")-len(rubro_menor))+"|"+f"     {menor}    |")
     
 def carga_locales(ar_datos,ar_destino,fila,col):
 
@@ -226,9 +235,10 @@ def print_menus(tipo):
 # Funciones de validacion
 def valid_codigo_usuario():
     valido= True
+
     cod=int(input(Fore.LIGHTCYAN_EX + "Ingrese el codigo: " + Fore.RESET))
 
-    while valido: 
+    while valido:
         ind=0
         while  (ind <= 2) and (ar_codigos[ind]!=cod) :
             ind+=1
@@ -261,8 +271,8 @@ def val_nombre():
     global ar_locales
     nombre=input(Fore.LIGHTCYAN_EX + "Ingrese el nombre: " + Fore.RESET)
 
-    while dico(ar_locales,nombre) and nombre !="*":
-        print(Fore.LIGHTRED_EX + "Nombre ya existente, elija otro")
+    while dico(ar_locales,nombre) and nombre !="*" or nombre=="":
+        print(Fore.LIGHTRED_EX + "Nombre ya existente o es invalido, elija otro")
         nombre=input(Fore.LIGHTCYAN_EX + "Ingrese el nombre: " + Fore.RESET)
 
     return nombre
@@ -308,10 +318,10 @@ def operar_contadores(rubro,tipo):
                     cont_comida-=1
                 case "perfumeria":
                     cont_perfumeria-=1
-            
+
 #Funcion del menu de locales   
 def CreacionLocal():
-    global limite,cod_local,ar_locales,ar_locales_cod,ar_rubro,ar_locales_estado
+    global limite,cod_local,ar_locales,ar_locales_cod,ar_rubro,ar_locales_estado,cantidadLoc
     
     mostrar_Local()
 
@@ -338,16 +348,16 @@ def CreacionLocal():
         ar_locales_cod[cod_local-1][0]=cod_usuario
         ar_locales_cod[cod_local-1][1]=cod_local
         cod_local+=1
+        limite-=1
+        cantidadLoc=cantidadLoc+1
         mostrar_tabla_rub()
+        print(Back.LIGHTGREEN_EX + f"\nEspacio disponible: {limite} ")
         input()
         limpiar_pantalla()
         orden_bi(ar_locales,50,3,0)
-        print(ar_locales)
         nombreLocal= val_nombre()
 
     limpiar_pantalla()
-    limite-=1
-    print(Back.LIGHTGREEN_EX + f"Espacio disponible: {limite} ")
 
 def mod_local():
     global ar_locales,ar_locales_cod,local_indice,ar_rubro, opc,ar_locales_estado
@@ -364,7 +374,7 @@ def mod_local():
         entrada_cod_local=int(input(Fore.LIGHTCYAN_EX + "Ingrese el codigo del local que desea modificar: " + Fore.RESET))
     
     limpiar_pantalla()  
-    if ar_locales_estado[local_indice][3]=="B":
+    if ar_locales_estado[local_indice]=="B":
         print(Style.BRIGHT + Fore.LIGHTMAGENTA_EX + "El local esta dado de baja, ¿Desea activarlo?")
         print(Fore.LIGHTCYAN_EX + "\n1." + Fore.RESET + "Si")
         print(Fore.LIGHTCYAN_EX + "2." + Fore.RESET + "No")
@@ -372,10 +382,10 @@ def mod_local():
         accion=val_opciones(opc,1,"Opcion no valida","\nIngrese una opcion: ")
 
         if accion=="1":
-            ar_locales_estado[local_indice][3]="A"
+            ar_locales_estado[local_indice]="A"
             operar_contadores(ar_locales[local_indice][2],"aumentar")
 
-    if ar_locales_estado[local_indice][3]=="A":
+    if ar_locales_estado[local_indice]=="A":
          limpiar_pantalla()
          print(Fore.LIGHTGREEN_EX + "Modificacion de datos del local" + Fore.RESET, entrada_cod_local, Fore.LIGHTGREEN_EX + "alias" + Fore.RESET, ar_locales[local_indice][0])
 
@@ -401,7 +411,9 @@ def mod_local():
                 limpiar_pantalla()
                 operar_contadores(ar_locales[local_indice][2],"restar")
                 operar_contadores(rubroLocal,"aumentar")
-                carga_locales([nombreLocal,ubicacionLocal,rubroLocal],ar_locales,local_indice,3)
+
+                ar_datos=[nombreLocal,ubicacionLocal,rubroLocal]
+                carga_locales(ar_datos,ar_locales,local_indice,3)
                 ar_locales_cod[local_indice][0]=cod_usuario
                 orden_bi(ar_locales,50,4,0)
             case "2":
@@ -446,7 +458,7 @@ def eliminar_local():
     opcion=val_opciones(opc,1,"Opcion no valida","\nIngrese una opcion: ")
 
     if opcion =="1":
-        ar_locales_estado[local_indice][3]="B"
+        ar_locales_estado[local_indice]="B"
         operar_contadores(ar_locales[local_indice][2],"restar")
 
 def limite_local():
@@ -543,7 +555,7 @@ def menuAdmin():
                 en_construccion()
             case "0":
                 fin=False
-                print(Style.BRIGHT + Fore.BLUE + "\nSALIENDO DEL PROGRAMA")
+                print(Style.BRIGHT + Fore.BLUE + "\nSALIENDO DEL PROGRAMA\n")
 
 def menuDueño():
    ar_opciones=["1","2","3","0"]
@@ -562,7 +574,7 @@ def menuDueño():
                 en_construccion()
             case "0":
                 fin=False
-                print(Style.BRIGHT + Fore.BLUE + "\nSALIENDO DEL PROGRAMA")
+                print(Style.BRIGHT + Fore.BLUE + "\nSALIENDO DEL PROGRAMA\n")
 
 def GestionDesc():
     ar_opciones=["a","b","c","d"]
@@ -602,7 +614,8 @@ def menuCliente():
                 en_construccion()
             case "0":
                 fin=False
-                print(Style.BRIGHT + Fore.BLUE + "\nSALIENDO DEL PROGRAMA")
+                limpiar_pantalla()
+                print(Style.BRIGHT + Fore.BLUE + "\nSALIENDO DEL PROGRAMA\n")
                 
 #Funcion de inicio del programa
 def verifNombre():
@@ -650,7 +663,7 @@ while(intentos!=0):
             if intentos!=0:
                 print(Fore.YELLOW + "\nIntentos restantes: " + Fore.RESET, intentos, "\n")
             else:
-                print(Style.BRIGHT + Fore.BLUE + "\nSALIENDO DEL PROGRAMA")
+                print(Style.BRIGHT + Fore.BLUE + "\nSALIENDO DEL PROGRAMA\n")
 
     else:
         limpiar_pantalla()
@@ -660,4 +673,4 @@ while(intentos!=0):
             print(Fore.YELLOW + "\nIntentos restantes: " + Fore.RESET, intentos, "\n")
             nombreUsuario=input(Style.BRIGHT + Fore.CYAN + "Ingrese el usuario: " + Fore.RESET)
         else: 
-            print(Style.BRIGHT + Fore.BLUE + "\nSALIENDO DEL PROGRAMA")
+            print(Style.BRIGHT + Fore.BLUE + "\nSALIENDO DEL PROGRAMA\n")
