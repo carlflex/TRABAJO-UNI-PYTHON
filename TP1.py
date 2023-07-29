@@ -2,6 +2,7 @@
 #Gugliermino Carlos
 #Teo Valentin Garcia Queipo
 #Franco Zariaga
+#Comision 1k6
 
 import getpass
 import os
@@ -50,13 +51,6 @@ ar_locales_estado=["" for  k in range(50)]
 ar_locales_cod=[[0 for j in range(2)]for i in range(50)]
 
 #funciones de utilidad
-def ar_indice(arreglo,elemento,largo):
-    ind=-1
-    for i in range(largo):
-        if arreglo[i]== elemento:
-            ind=i
-    return ind
-
 def ar_orden(arreglo,largo,ar2):
 
     for i in range(1,largo):

@@ -54,3 +54,10 @@ ar.sort()
 print(ar,ar2) """
 
 print(" "<"zkñ")
+
+def ar_indice(arreglo,elemento,largo):
+    ind=-1
+    for i in range(largo):
+        if arreglo[i]== elemento:
+            ind=i
+    return ind
