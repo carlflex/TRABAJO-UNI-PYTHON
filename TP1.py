@@ -279,12 +279,12 @@ def val_nombre():
 
 def val_opciones(ar,largo,error,mensaje):
 
-    opc=input(Fore.LIGHTCYAN_EX + mensaje + Fore.RESET)
+    opt=input(Fore.LIGHTCYAN_EX + mensaje + Fore.RESET)
 
     while not ar_existe(ar,largo,opc):
         print(Fore.LIGHTRED_EX + error)
-        opc=input(Fore.LIGHTCYAN_EX + mensaje + Fore.RESET)
-    return opc
+        opt=input(Fore.LIGHTCYAN_EX + mensaje + Fore.RESET)
+    return opt
         
 
 #Funcion de construccion
