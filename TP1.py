@@ -416,8 +416,8 @@ def mod_local():
                     operar_contadores(ar_locales[local_indice][2],"restar")
                     operar_contadores(rubroLocal,"aumentar")
 
-                    ar_datos=[nombreLocal,ubicacionLocal,rubroLocal]
-                    carga_locales(ar_datos,ar_locales,local_indice,3)
+                    ar_local_datos=[nombreLocal,ubicacionLocal,rubroLocal]
+                    carga_locales( ar_local_datos,ar_locales,local_indice,3)
                     ar_locales_cod[local_indice][0]=cod_usuario
                     orden_bi(ar_locales,50,4,0)
                 case "2":
@@ -542,12 +542,12 @@ def menu_novedades():
 
 #Funcion del menu principal
 def menuAdmin():
-   ar_opciones=["1","2","3","4","5","0"]
+   ar_opciones1=["1","2","3","4","5","0"]
    fin=True
    while fin:
         print_menus("admin")
 
-        accion= val_opciones(ar_opciones,5,"\nOpcion no valida","\nIngrese una opcion: ")
+        accion= val_opciones(ar_opciones1,5,"\nOpcion no valida","\nIngrese una opcion: ")
         match accion:
             case "1":
                 menu_local()
@@ -564,12 +564,12 @@ def menuAdmin():
                 print(Style.BRIGHT + Fore.BLUE + "\nSALIENDO DEL PROGRAMA\n")
 
 def menuDueño():
-   ar_opciones=["1","2","3","0"]
+   ar_opciones2=["1","2","3","0"]
    fin=True
    while fin:
         print_menus("dueño")
 
-        accion= val_opciones(ar_opciones,3,"\nOpcion no valida","\nIngrese una opcion: ")
+        accion= val_opciones(ar_opciones2,3,"\nOpcion no valida","\nIngrese una opcion: ")
 
         match accion:
             case "1":
@@ -583,13 +583,13 @@ def menuDueño():
                 print(Style.BRIGHT + Fore.BLUE + "\nSALIENDO DEL PROGRAMA\n")
 
 def GestionDesc():
-    ar_opciones=["a","b","c","d"]
+    ar_opciones3=["a","b","c","d"]
     fin=True
     while fin:
         limpiar_pantalla()
         print_menus("descuento")
 
-        accion=val_opciones(ar_opciones,3,"\nOpcion no valida","\nIngrese una opcion: ")
+        accion=val_opciones(ar_opciones3,3,"\nOpcion no valida","\nIngrese una opcion: ")
  
         match accion:
             case "a":
@@ -603,12 +603,12 @@ def GestionDesc():
                 fin=False
 
 def menuCliente():
-   ar_opciones=["1","2","3","4","0"]
+   ar_opciones4=["1","2","3","4","0"]
    fin=True
    while fin:
         print_menus("cliente")
 
-        accion= val_opciones(ar_opciones,4,"\nOpcion no valida","\nIngrese una opcion: ")
+        accion= val_opciones(ar_opciones4,4,"\nOpcion no valida","\nIngrese una opcion: ")
         match accion:
             case "1":
                 en_construccion()
