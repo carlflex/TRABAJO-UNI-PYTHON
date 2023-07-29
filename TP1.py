@@ -23,6 +23,7 @@ local_indice=0
 maxlen1=0
 maxlen2=0
 maxlen3=0
+fin_cod=True
 
 ar_rubro=["indumentaria","comida","perfumeria"]
 
@@ -46,7 +47,7 @@ ar_codigos=[1,4,6,9]
     []  #Estado
 ] """
 
-ar_locales=[["   " for j in range(3)] for i in range(50)]
+ar_locales=[["" for j in range(3)] for i in range(50)]
 ar_locales_estado=["" for  k in range(50)]
 ar_locales_cod=[[0 for j in range(2)]for i in range(50)]
 
@@ -133,7 +134,7 @@ def orden_bi(arreglo,filas,columnas,co_orden):
     global ar_locales_cod,ar_locales_estado
     for i in range(filas-1):
         for j in range(i+1,filas):
-            if arreglo[i][co_orden]>arreglo[j][co_orden] and arreglo[j][co_orden] !=" " :
+            if arreglo[i][co_orden]>arreglo[j][co_orden] and arreglo[j][co_orden] !="" :
                 for k in range(columnas):
                     temp=arreglo[i][k]
                     arreglo[i][k]=arreglo[j][k]
@@ -250,12 +251,18 @@ def valid_codigo_usuario():
     return cod     
 
 def val_datos_local(dato):
-    global ar_locales_cod,local_indice
+    global ar_locales_cod,local_indice,fin_cod
     ind=0
+
+    if dato==0:
+        fin_cod=False
+        return False
+
     while  (ind < 49) and dato !=ar_locales_cod[ind][1]:
         ind+=1
     
     if ar_locales_cod[ind][1]==dato:
+      fin_cod=True
       local_indice=ind
       return False
     else:
@@ -275,7 +282,7 @@ def val_opciones(ar,largo,error,mensaje):
 
     opt=input(Fore.LIGHTCYAN_EX + mensaje + Fore.RESET)
 
-    while not ar_existe(ar,largo,opc):
+    while not ar_existe(ar,largo,opt):
         print(Fore.LIGHTRED_EX + error)
         opt=input(Fore.LIGHTCYAN_EX + mensaje + Fore.RESET)
     return opt
@@ -284,7 +291,7 @@ def val_opciones(ar,largo,error,mensaje):
 #Funcion de construccion
 def en_construccion():
     limpiar_pantalla()
-    print(Fore.YELLOW + "|￣￣￣￣￣￣￣￣￣￣￣￣￣|")
+    print(Fore.YELLOW + "|￣￣￣￣￣￣￣￣￣￣￣￣￣￣|")
     print(Fore.YELLOW + "      EN CONTRUCCION        ")
     print(Fore.YELLOW + "|__________________________|")
     print(Fore.YELLOW + "        \ (• ◡ •) /          ")
@@ -344,17 +351,18 @@ def CreacionLocal():
         cod_local+=1
         limite-=1
         cantidadLoc=cantidadLoc+1
+        orden_bi(ar_locales,50,3,0)
+        print(ar_locales)
         mostrar_tabla_rub()
         print(Back.LIGHTGREEN_EX + f"\nEspacio disponible: {limite} ")
         input()
         limpiar_pantalla()
-        orden_bi(ar_locales,50,3,0)
         nombreLocal= val_nombre()
 
     limpiar_pantalla()
 
 def mod_local():
-    global ar_locales,ar_locales_cod,local_indice,ar_rubro, opc,ar_locales_estado
+    global ar_locales,ar_locales_cod,local_indice,ar_rubro, opc,ar_locales_estado,fin_cod
 
     opcMOD=["1","2","3","4","5","6"]
     
@@ -367,73 +375,75 @@ def mod_local():
         print(Fore.LIGHTRED_EX + "\nCodigo no existe")
         entrada_cod_local=int(input(Fore.LIGHTCYAN_EX + "Ingrese el codigo del local que desea modificar: " + Fore.RESET))
     
-    limpiar_pantalla()  
-    if ar_locales_estado[local_indice]=="B":
-        print(Style.BRIGHT + Fore.LIGHTMAGENTA_EX + "El local esta dado de baja, ¿Desea activarlo?")
-        print(Fore.LIGHTCYAN_EX + "\n1." + Fore.RESET + "Si")
-        print(Fore.LIGHTCYAN_EX + "2." + Fore.RESET + "No")
-    
-        accion=val_opciones(opc,1,"Opcion no valida","\nIngrese una opcion: ")
+    limpiar_pantalla()
 
-        if accion=="1":
-            ar_locales_estado[local_indice]="A"
-            operar_contadores(ar_locales[local_indice][2],"aumentar")
-
-    if ar_locales_estado[local_indice]=="A":
-         limpiar_pantalla()
-         print(Fore.LIGHTGREEN_EX + "Modificacion de datos del local" + Fore.RESET, entrada_cod_local, Fore.LIGHTGREEN_EX + "alias" + Fore.RESET, ar_locales[local_indice][0])
-
-         print(Fore.LIGHTCYAN_EX + "\n1. " + Fore.RESET +  "Modificar todo")
-         print(Fore.LIGHTCYAN_EX + "2. " + Fore.RESET + "Modificar nombre")
-         print(Fore.LIGHTCYAN_EX + "3. " + Fore.RESET + "Modificar ubicacion")
-         print(Fore.LIGHTCYAN_EX + "4. " + Fore.RESET + "Modificar rubro")
-         print(Fore.LIGHTCYAN_EX + "5. " + Fore.RESET + "Modificar codigo de usuario")
-         print(Fore.LIGHTCYAN_EX + "6. " + Fore.RESET + "Volver")
-
-         accion=val_opciones(opcMOD,5,"Opcion no valida","\nIngrese una opcion: ")
+    if fin_cod:  
+        if ar_locales_estado[local_indice]=="B":
+            print(Style.BRIGHT + Fore.LIGHTMAGENTA_EX + "El local esta dado de baja, ¿Desea activarlo?")
+            print(Fore.LIGHTCYAN_EX + "\n1." + Fore.RESET + "Si")
+            print(Fore.LIGHTCYAN_EX + "2." + Fore.RESET + "No")
         
-         match accion:
-            case "1":
-                limpiar_pantalla()
-                nombreLocal= val_nombre()
-                limpiar_pantalla()
-                ubicacionLocal=input(Fore.LIGHTCYAN_EX + "Ingrese la ubicacion: " + Fore.RESET)
-                limpiar_pantalla()
-                rubroLocal=val_opciones(ar_rubro,2,"El rubro no existe, tiene estas opciones: indumentaria, perfumeria, comida","Ingrese el rubro: ")
-                limpiar_pantalla()
-                cod_usuario=valid_codigo_usuario()
-                limpiar_pantalla()
-                operar_contadores(ar_locales[local_indice][2],"restar")
-                operar_contadores(rubroLocal,"aumentar")
+            accion=val_opciones(opc,1,"Opcion no valida","\nIngrese una opcion: ")
 
-                ar_datos=[nombreLocal,ubicacionLocal,rubroLocal]
-                carga_locales(ar_datos,ar_locales,local_indice,3)
-                ar_locales_cod[local_indice][0]=cod_usuario
-                orden_bi(ar_locales,50,4,0)
-            case "2":
-                limpiar_pantalla()
-                nombreLocal= val_nombre()
-                ar_locales[local_indice][0]=nombreLocal
-                orden_bi(ar_locales,50,4,0)
-            case "3":
-                limpiar_pantalla()
-                ubicacionLocal=input(Fore.LIGHTCYAN_EX + "Ingrese la ubicacion: " + Fore.RESET)
-                ar_locales[local_indice][1]=ubicacionLocal
-            case "4":
-                limpiar_pantalla()
-                rubroLocal=val_opciones(ar_rubro,2,"El rubro no existe, tiene estas opciones: indumentaria, perfumeria, comida","Ingrese el rubro: ")
-                operar_contadores(ar_locales[local_indice][2],"restar")
-                operar_contadores(rubroLocal,"aumentar")
-                ar_locales[local_indice][2]=rubroLocal
-            case "5":
-                limpiar_pantalla()
-                cod_usuario=valid_codigo_usuario()
-                ar_locales_cod[local_indice][0]=cod_usuario
-            case "6":
-                ""
+            if accion=="1":
+                ar_locales_estado[local_indice]="A"
+                operar_contadores(ar_locales[local_indice][2],"aumentar")
+
+        if ar_locales_estado[local_indice]=="A":
+            limpiar_pantalla()
+            print(Fore.LIGHTGREEN_EX + "Modificacion de datos del local" + Fore.RESET, entrada_cod_local, Fore.LIGHTGREEN_EX + "alias" + Fore.RESET, ar_locales[local_indice][0])
+
+            print(Fore.LIGHTCYAN_EX + "\n1. " + Fore.RESET +  "Modificar todo")
+            print(Fore.LIGHTCYAN_EX + "2. " + Fore.RESET + "Modificar nombre")
+            print(Fore.LIGHTCYAN_EX + "3. " + Fore.RESET + "Modificar ubicacion")
+            print(Fore.LIGHTCYAN_EX + "4. " + Fore.RESET + "Modificar rubro")
+            print(Fore.LIGHTCYAN_EX + "5. " + Fore.RESET + "Modificar codigo de usuario")
+            print(Fore.LIGHTCYAN_EX + "6. " + Fore.RESET + "Volver")
+
+            accion=val_opciones(opcMOD,5,"Opcion no valida","\nIngrese una opcion: ")
+            
+            match accion:
+                case "1":
+                    limpiar_pantalla()
+                    nombreLocal= val_nombre()
+                    limpiar_pantalla()
+                    ubicacionLocal=input(Fore.LIGHTCYAN_EX + "Ingrese la ubicacion: " + Fore.RESET)
+                    limpiar_pantalla()
+                    rubroLocal=val_opciones(ar_rubro,2,"El rubro no existe, tiene estas opciones: indumentaria, perfumeria, comida","Ingrese el rubro: ")
+                    limpiar_pantalla()
+                    cod_usuario=valid_codigo_usuario()
+                    limpiar_pantalla()
+                    operar_contadores(ar_locales[local_indice][2],"restar")
+                    operar_contadores(rubroLocal,"aumentar")
+
+                    ar_datos=[nombreLocal,ubicacionLocal,rubroLocal]
+                    carga_locales(ar_datos,ar_locales,local_indice,3)
+                    ar_locales_cod[local_indice][0]=cod_usuario
+                    orden_bi(ar_locales,50,4,0)
+                case "2":
+                    limpiar_pantalla()
+                    nombreLocal= val_nombre()
+                    ar_locales[local_indice][0]=nombreLocal
+                    orden_bi(ar_locales,50,4,0)
+                case "3":
+                    limpiar_pantalla()
+                    ubicacionLocal=input(Fore.LIGHTCYAN_EX + "Ingrese la ubicacion: " + Fore.RESET)
+                    ar_locales[local_indice][1]=ubicacionLocal
+                case "4":
+                    limpiar_pantalla()
+                    rubroLocal=val_opciones(ar_rubro,2,"El rubro no existe, tiene estas opciones: indumentaria, perfumeria, comida","Ingrese el rubro: ")
+                    operar_contadores(ar_locales[local_indice][2],"restar")
+                    operar_contadores(rubroLocal,"aumentar")
+                    ar_locales[local_indice][2]=rubroLocal
+                case "5":
+                    limpiar_pantalla()
+                    cod_usuario=valid_codigo_usuario()
+                    ar_locales_cod[local_indice][0]=cod_usuario
+                case "6":
+                    ""
             
 def eliminar_local():
-    global ar_locales, opc,ar_locales_estado
+    global ar_locales, opc,ar_locales_estado,fin_cod
 
     limpiar_pantalla()
     mostrar_Local()
@@ -445,15 +455,17 @@ def eliminar_local():
         entrada_cod_local=int(input(Fore.LIGHTCYAN_EX + "Ingrese el codigo del local que desea eliminar: " + Fore.RESET))
 
     limpiar_pantalla()
-    print(Style.BRIGHT + Fore.LIGHTMAGENTA_EX + "¿Desea dar de baja este local?")
-    print(Fore.LIGHTCYAN_EX + "\n1." + Fore.RESET + "Si")
-    print(Fore.LIGHTCYAN_EX + "2." + Fore.RESET + "No")
 
-    opcion=val_opciones(opc,1,"Opcion no valida","\nIngrese una opcion: ")
+    if fin_cod:
+        print(Style.BRIGHT + Fore.LIGHTMAGENTA_EX + "¿Desea dar de baja este local?")
+        print(Fore.LIGHTCYAN_EX + "\n1." + Fore.RESET + "Si")
+        print(Fore.LIGHTCYAN_EX + "2." + Fore.RESET + "No")
 
-    if opcion =="1":
-        ar_locales_estado[local_indice]="B"
-        operar_contadores(ar_locales[local_indice][2],"restar")
+        opcion=val_opciones(opc,1,"Opcion no valida","\nIngrese una opcion: ")
+
+        if opcion =="1":
+            ar_locales_estado[local_indice]="B"
+            operar_contadores(ar_locales[local_indice][2],"restar")
 
 def limite_local():
     global limite
