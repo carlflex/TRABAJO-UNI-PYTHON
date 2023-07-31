@@ -61,3 +61,12 @@ def ar_indice(arreglo,elemento,largo):
         if arreglo[i]== elemento:
             ind=i
     return ind
+
+
+ar_bi=[["dfsdf"],
+       ["pepe"]]
+
+c1=0
+print(f"{ar_bi[0][0+c1]}| {ar_bi[0][1+c1]}")
+
+c1+=5

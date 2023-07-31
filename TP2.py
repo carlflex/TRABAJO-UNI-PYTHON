@@ -352,7 +352,6 @@ def CreacionLocal():
         limite-=1
         cantidadLoc=cantidadLoc+1
         orden_bi(ar_locales,50,3,0)
-        print(ar_locales)
         mostrar_tabla_rub()
         print(Back.LIGHTGREEN_EX + f"\nEspacio disponible: {limite} ")
         input()
