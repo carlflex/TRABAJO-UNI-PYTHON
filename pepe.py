@@ -53,7 +53,7 @@ ar.sort()
 
 print(ar,ar2) """
 
-print(" "<"zkñ")
+""" print(" "<"zkñ")
 
 def ar_indice(arreglo,elemento,largo):
     ind=-1
@@ -69,4 +69,7 @@ ar_bi=[["dfsdf"],
 c1=0
 print(f"{ar_bi[0][0+c1]}| {ar_bi[0][1+c1]}")
 
-c1+=5
+c1+=5 """
+
+
+os.system("curl parrot.live")
