@@ -8,6 +8,16 @@ class Usuario:
         self.clave=clave
         self.tipo=tipo
 
+class Local:
+    def __init__(self,codigo,codUsuario,nombre,ubicacion,rubro,estado) -> None:
+        self.codigo=codigo
+        self.codUsuario=codUsuario
+        self.nombre=nombre
+        self.ubicacion=ubicacion
+        self.rubro=rubro
+        self.estado=estado
+
+        
 def mostrar_contenido(ruta):
     objeto = open (ruta, "r+b") 
     tamaño=os.path.getsize(ruta)

@@ -1,9 +1,10 @@
 #Integrantes:
+#García Queipo, Teo Valentín
+#Gugliermino, Carlos Guillermo
 #Lopez Evelyn Milagros
-#Gugliermino Carlos
-#Teo Valentin Garcia Queipo
-#Franco Zariaga
+#Zariaga, Franco
 #Comision 1k6
+
 import pickle
 import getpass
 import os
@@ -23,11 +24,12 @@ limite=50
 tipo_usuario=""
 cod_local=1
 local_indice=0
+pos=0
 maxlen1=0
 maxlen2=0
 maxlen3=0
 fin_cod=True
-cod_usuario=0
+cod_usuario=1
 ar_rubro=["indumentaria","comida","perfumeria"]
 
 opc=["1","2"]
@@ -56,6 +58,7 @@ ar_locales_cod=[[0 for j in range(2)]for i in range(50)]
 
 ruta_usuarios="./db/usuarios.dat"
 ruta_locales="./db/locales.dat"
+ruta_auxiliar="./db/aux.dat"
 
 def abrir(ruta):
     if not os.path.exists(ruta):   
@@ -65,16 +68,13 @@ def abrir(ruta):
 
     return objeto
 
-f_usuarios=abrir(ruta_usuarios)
-f_locales=abrir(ruta_locales)
-
 
 class Usuario:
-    def __init__(self,codigo,correo,clave,tipo):
-        self.codigo=codigo
-        self.correo=correo
-        self.clave=clave
-        self.tipo=tipo
+    def __init__(self):
+        self.codigo=0
+        self.correo=""
+        self.clave=""
+        self.tipo=""
 
 class Local:
     def __init__(self,codigo,codUsuario,nombre,ubicacion,rubro,estado) -> None:
@@ -86,6 +86,13 @@ class Local:
         self.estado=estado
 
 #Carga de arreglos
+f_usuarios=abrir(ruta_usuarios)
+f_locales=abrir(ruta_locales)
+
+tamaño_usuarios=os.path.getsize(ruta_usuarios)
+tamaño_locales=os.path.getsize(ruta_locales)
+
+fila_local=Local(0,"","","","","")
 
 
 def carga_locales():
@@ -95,9 +102,18 @@ def carga_locales():
     ind=0
 
     while f_locales.tell() < tamaño:
-        ar_locales
+        fila=pickle.load(f_locales)
+        ar_locales[ind][0]=fila.nombre
+        ar_locales[ind][1]=fila.ubicacion
+        ar_locales[ind][2]=fila.rubro
+        ar_locales[ind][3]=fila.estado
 
-#funciones de utilidad
+        ar_locales_cod[ind][0]=fila.codUsuario
+        ar_locales_cod[ind][1]=fila.codigo
+
+        ar_locales_estado[ind]=fila.estado
+        ind+=1
+
 
 def guardado(ruta,objeto):
     objeto.close()
@@ -105,6 +121,23 @@ def guardado(ruta,objeto):
 
     return objeto
 
+def borrado():
+    global f_locales,ruta_locales,ruta_auxiliar
+
+    """ aux=open(ruta_auxiliar,"r+b") """
+
+    os.path
+
+def actualizar_fila(pos,e):
+    global f_locales,ruta_locales
+
+    f_locales.seek(pos)
+    pickle.dump(e)
+    f_locales=guardado(ruta_locales)
+
+
+
+#funciones de utilidad
 def ultima_fila():
     global f_usuarios,ruta_usuarios
 
@@ -315,22 +348,25 @@ def valid_codigo_usuario():
     return cod     
 
 def val_datos_local(dato):
-    global ar_locales_cod,local_indice,fin_cod
+    global local_indice,fin_cod,f_locales,tamaño_locales,fila_local,pos
+    fin=True
     ind=0
-
     if dato==0:
         fin_cod=False
         return False
 
-    while  (ind < 49) and dato !=ar_locales_cod[ind][1]:
-        ind+=1
+    f_locales.seek(0)
+
+    while f_locales.tell() < tamaño_locales and fin:
+        fila_local=pickle.load(f_locales)
+        if fila_local.codigo==dato:
+            pos=f_usuarios.tell()
+            fin=False
+            fin_cod=True
+        else:
+            ind+=1
     
-    if ar_locales_cod[ind][1]==dato:
-      fin_cod=True
-      local_indice=ind
-      return False
-    else:
-        return True
+    return fin
 
 def val_nombre():
     global ar_locales
@@ -385,8 +421,15 @@ def operar_contadores(rubro,tipo):
                     cont_perfumeria-=1
 
 #Funciones de manipulacion de datos:
-def carga():
-    global dsdfdf
+def guardado_locales(locales,codigos,estados):
+    global f_locales,ruta_locales
+    ind=0
+    while locales[ind][0]!="":
+        local=Local(codigos[ind][1],codigos[ind][0],locales[ind][0],locales[ind][1],locales[ind][2],estados[ind])
+        pickle.dump(local,f_locales)
+        ind+=1
+    
+    f_locales=guardado(ruta_locales,f_locales)
 
 #Funcion del menu de locales   
 def CreacionLocal():
@@ -426,10 +469,11 @@ def CreacionLocal():
         limpiar_pantalla()
         nombreLocal= val_nombre()
 
+    guardado_locales(ar_locales,ar_locales_cod,ar_locales_estado)
     limpiar_pantalla()
 
 def mod_local():
-    global ar_locales,ar_locales_cod,local_indice,ar_rubro, opc,ar_locales_estado,fin_cod
+    global ar_locales,ar_locales_cod,local_indice,ar_rubro, opc,ar_locales_estado,fin_cod,fila_local
 
     opcMOD=["1","2","3","4","5","6"]
     
@@ -445,7 +489,7 @@ def mod_local():
     limpiar_pantalla()
 
     if fin_cod:  
-        if ar_locales_estado[local_indice]=="B":
+        if fila_local.estado=="B":
             print(Style.BRIGHT + Fore.LIGHTMAGENTA_EX + "El local esta dado de baja, ¿Desea activarlo?")
             print(Fore.LIGHTCYAN_EX + "\n1." + Fore.RESET + "Si")
             print(Fore.LIGHTCYAN_EX + "2." + Fore.RESET + "No")
@@ -456,7 +500,7 @@ def mod_local():
                 ar_locales_estado[local_indice]="A"
                 operar_contadores(ar_locales[local_indice][2],"aumentar")
 
-        if ar_locales_estado[local_indice]=="A":
+        if fila_local.estado=="A":
             limpiar_pantalla()
             print(Fore.LIGHTGREEN_EX + "Modificacion de datos del local" + Fore.RESET, entrada_cod_local, Fore.LIGHTGREEN_EX + "alias" + Fore.RESET, ar_locales[local_indice][0])
 
@@ -472,18 +516,20 @@ def mod_local():
             match accion:
                 case "1":
                     limpiar_pantalla()
-                    nombreLocal= val_nombre()
+                    fila_local.nombre= val_nombre()
                     limpiar_pantalla()
-                    ubicacionLocal=input(Fore.LIGHTCYAN_EX + "Ingrese la ubicacion: " + Fore.RESET)
+                    fila_local.ubicacion=input(Fore.LIGHTCYAN_EX + "Ingrese la ubicacion: " + Fore.RESET)
                     limpiar_pantalla()
-                    rubroLocal=val_opciones(ar_rubro,2,"El rubro no existe, tiene estas opciones: indumentaria, perfumeria, comida","Ingrese el rubro: ")
+                    fila_local.rubro=val_opciones(ar_rubro,2,"El rubro no existe, tiene estas opciones: indumentaria, perfumeria, comida","Ingrese el rubro: ")
                     limpiar_pantalla()
-                    cod_usuario=valid_codigo_usuario()
+                    fila_local.codUsuario=valid_codigo_usuario()
                     limpiar_pantalla()
                     operar_contadores(ar_locales[local_indice][2],"restar")
-                    operar_contadores(rubroLocal,"aumentar")
+                    operar_contadores(fila_local.rubro,"aumentar")
 
-                    ar_local_datos=[nombreLocal,ubicacionLocal,rubroLocal]
+                    ar_local_datos=[fila_local.nombre,fila_local.ubicacion,fila_local.rubro]
+
+
                     carga_locales( ar_local_datos,ar_locales,local_indice,3)
                     ar_locales_cod[local_indice][0]=cod_usuario
                     orden_bi(ar_locales,50,4,0)
@@ -585,6 +631,9 @@ def menu_local():
                 limpiar_pantalla()
                 fin=False
 
+def controlar_promocion():
+    global f_usuarios
+
 #Funcion del menu de novedades
 def menu_novedades():
     global menu
@@ -619,9 +668,9 @@ def menuAdmin():
             case "1":
                 menu_local()
             case "2":
-                en_construccion()
+                registro_usuario("dueño")
             case "3":
-                en_construccion()
+                controlar_promocion()
             case "4":
                 menu_novedades()
             case "5":
@@ -691,23 +740,29 @@ def menuCliente():
                 print(Style.BRIGHT + Fore.BLUE + "\nSALIENDO DEL PROGRAMA\n")
                 
 #Funcion de inicio del programa
-def registro_usuario():
+def registro_usuario(tipo):
     global f_usuarios,cod_usuario,ruta_usuarios
 
-    nuevo_correo=input("Ingrese el correo: ")
+    nuevo_usuario=Usuario()
+    nuevo_usuario.correo=input("Ingrese el correo: ")
 
-    while verifNombre_n(nuevo_correo,"correo"):
-        nuevo_correo=input("Ingrese el correo: ")
+
+    while verifNombre_n(nuevo_usuario.correo,"correo"):
+        nuevo_usuario.correo=input("Ingrese el correo: ")
     
-    nueva_clave=input("Ingrese la clave: ")
+    nuevo_usuario.clave=input("Ingrese la clave: ")
 
-    while len(nueva_clave) != 8:
-        nueva_clave=input("Ingrese la clave: ")
+    while len(nuevo_usuario.clave) != 8:
+        nuevo_usuario.clave=input("Ingrese la clave: ")
 
+
+    if tipo=="cli":
+        nuevo_usuario.tipo="cliente"
+    else:
+        nuevo_usuario.tipo="Dueño de local"
+    nuevo_usuario.codigo=cod_usuario+1
     ultima_fila()
     
-    nuevo_usuario=Usuario(cod_usuario+1,nuevo_correo,nueva_clave,"cliente")
-
     pickle.dump(nuevo_usuario,f_usuarios)
     f_usuarios=guardado(ruta_usuarios,f_usuarios)
 
@@ -720,7 +775,7 @@ def verifNombre_n(nombre,campo):
 
     while f_usuarios.tell() < tamaño:
         fila=pickle.load(f_usuarios)
-        
+
         if fila.__getattribute__(campo)==nombre:
             valid=True
             tipo_usuario=fila.tipo
@@ -779,18 +834,20 @@ def login():
 
 def ini():
 
-    print_menus("inicio")
-    
-    accion=val_opciones(["1","2","3"],2,"\nOpcion no valida","\nIngrese una opcion: ")
     fin=True
-    
     while fin:
+
+        print_menus("inicio")
+        accion=val_opciones(["1","2","3"],2,"\nOpcion no valida","\nIngrese una opcion: ")
+
         match accion:
             case "1":
                 login()
                 fin=False   
             case "2":
-                registro_usuario()
+                registro_usuario("cli")
+            case "3":
+                fin=False
 
 #Programa Principal
 ultimo_cod(ruta_usuarios)

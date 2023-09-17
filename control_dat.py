@@ -2,6 +2,7 @@ import os
 import pickle
 
 ruta_usuarios="./db/usuarios.dat"
+ruta_locales="./db/locales.dat"
 
 if not os.path.exists(ruta_usuarios):   
 	alPiezas = open (ruta_usuarios, "w+b")   
@@ -15,7 +16,15 @@ class Usuario:
         self.correo=correo
         self.clave=clave
         self.tipo=tipo
-	
+
+class Local:
+    def __init__(self,codigo,codUsuario,nombre,ubicacion,rubro,estado) -> None:
+        self.codigo=codigo
+        self.codUsuario=codUsuario
+        self.nombre=nombre
+        self.ubicacion=ubicacion
+        self.rubro=rubro
+        self.estado=estado	
 	    
 user=Usuario(1,"admin@shopping.com","12345","administrador")
 
@@ -55,6 +64,23 @@ def buscar_file(ruta,e,col):
              print(objeto.tell())
              objeto.seek(tamaño)
 
+def val_datos_local(dato):
+    global ar_locales_cod,local_indice,fin_cod
+    ind=0
+
+    if dato==0:
+        fin_cod=False
+        return False
+
+    while  (ind < 49) and dato !=ar_locales_cod[ind][1]:
+        ind+=1
+    
+    if ar_locales_cod[ind][1]==dato:
+      fin_cod=True
+      local_indice=ind
+      return False
+    else:
+        return True
 """ buscar_file(ruta_usuarios,6,"codigo") """
 """ alPiezas.seek(121)
 
