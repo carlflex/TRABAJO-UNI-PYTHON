@@ -1,6 +1,6 @@
 #Integrantes:
 #García Queipo, Teo Valentín
-#Gugliermino, Carlos Guillermo
+#Gugliermino, Carlo
 #Lopez Evelyn Milagros
 #Zariaga, Franco
 #Comision 1k6
@@ -11,8 +11,8 @@ import os
 from tabulate import tabulate
 from colorama import init, Fore, Back, Style
 from mostrar import mostrar_contenido
+import datetime
 init(autoreset=True)
-
 
 #Variables globales
 intentos=3
@@ -30,7 +30,12 @@ maxlen2=0
 maxlen3=0
 fin_cod=True
 cod_usuario=1
+cod_prom=0
+cant_desc=0
+
 ar_rubro=["indumentaria","comida","perfumeria"]
+
+ar_dias_semana=["Lunes","Martes","Miercoles","Jueves","Viernes","Sabado","Domingo"]
 
 opc=["1","2"]
 
@@ -55,10 +60,15 @@ ar_codigos=[1,4,6,9]
 ar_locales=[["" for j in range(3)] for i in range(50)]
 ar_locales_estado=["" for  k in range(50)]
 ar_locales_cod=[[0 for j in range(2)]for i in range(50)]
+ar_desc=[["" for j in range(2)] for i in range(50)]
+ar_desc_cod=[[0 for j in range(2)]for i in range(50)]
+ar_desc_estado=["" for  k in range(50)]
+ar_desc_dias=[["" for j in range(6)] for i in range(50)]
 
 ruta_usuarios="./db/usuarios.dat"
 ruta_locales="./db/locales.dat"
 ruta_auxiliar="./db/aux.dat"
+ruta_promociones="./db/promociones.dat"
 
 def abrir(ruta):
     if not os.path.exists(ruta):   
@@ -67,7 +77,6 @@ def abrir(ruta):
         objeto = open (ruta, "r+b")
 
     return objeto
-
 
 class Usuario:
     def __init__(self):
@@ -85,28 +94,40 @@ class Local:
         self.rubro=rubro
         self.estado=estado
 
+class Promocion:
+    def __init__(self):
+        self.codProm=0
+        self.desc=""
+        self.fechaDesde=""
+        self.fechaHasta=""
+        self.dias=[""]*7
+        self.est=""
+        self.codLoc=0
+
 #Carga de arreglos
 f_usuarios=abrir(ruta_usuarios)
 f_locales=abrir(ruta_locales)
+f_promociones=abrir(ruta_promociones)
 
 tamaño_usuarios=os.path.getsize(ruta_usuarios)
 tamaño_locales=os.path.getsize(ruta_locales)
+tamaño_promociones=os.path.getsize(ruta_promociones)
 
 fila_local=Local(0,"","","","","")
+fila_usuarios=Usuario()
+fila_promociones=Promocion()
 
-
-def carga_locales():
+def carga_ar_locales():
     global ar_locales,ar_locales_cod,ar_locales_estado,ruta_locales,f_locales
 
-    tamaño=os.path.getsize(ruta_locales)
+    f_locales.seek(0)
     ind=0
-
+    tamaño=os.path.getsize(ruta_locales)
     while f_locales.tell() < tamaño:
         fila=pickle.load(f_locales)
         ar_locales[ind][0]=fila.nombre
         ar_locales[ind][1]=fila.ubicacion
         ar_locales[ind][2]=fila.rubro
-        ar_locales[ind][3]=fila.estado
 
         ar_locales_cod[ind][0]=fila.codUsuario
         ar_locales_cod[ind][1]=fila.codigo
@@ -114,6 +135,31 @@ def carga_locales():
         ar_locales_estado[ind]=fila.estado
         ind+=1
 
+    f_locales.seek(0)
+
+def carga_prom():
+
+    ind=0
+
+    while f_promociones.tell() < tamaño_promociones:
+        fila=pickle.load(f_promociones)
+        ar_desc[ind][0]=fila.desc
+        ar_desc[ind][1]=fila.fechaDesde
+        ar_desc[ind][2]=fila.fechaHasta
+
+        ar_desc_cod[ind][0]=fila.codProm
+        ar_desc_cod[ind][1]=fila.codLoc
+
+        ar_desc_estado[ind]=fila.estado
+
+        dia=0
+        while dia < 6:
+            ar_desc_dias[ind][dia]=fila_promociones.dias[ind][dia]
+            dia+=1
+        
+        ind+=1
+    
+    f_promociones.seek(0)
 
 def guardado(ruta,objeto):
     objeto.close()
@@ -132,10 +178,10 @@ def actualizar_fila(pos,e):
     global f_locales,ruta_locales
 
     f_locales.seek(pos)
-    pickle.dump(e)
-    f_locales=guardado(ruta_locales)
+    pickle.dump(e,f_locales)
+    f_locales.seek(0) 
 
-
+   
 
 #funciones de utilidad
 def ultima_fila():
@@ -156,7 +202,6 @@ def ar_orden(arreglo,largo,ar2):
                 ar2[j]=ar2[j+1]
                 ar2[j+1]=temp2
   
-
 def ar_existe(arreglo,largo,elemento):
     ind=0
 
@@ -218,9 +263,19 @@ def tablaLOC(ar1,ar2,ar3):
                 print(Fore.LIGHTMAGENTA_EX + "| Nombre: " + Fore.RESET , f"{ar1[i][0]}"+" " *(maxlen1-len(ar1[i][0])), Fore.LIGHTMAGENTA_EX + "| Ubicación: " + Fore.RESET, f"{ar1[i][1]}"+" " *(maxlen2-len(ar1[i][1])), Fore.LIGHTMAGENTA_EX + "| Rubro: " + Fore.RESET , f"{ar1[i][2]}"+" " *(maxlen3-len(ar1[i][2])), Fore.LIGHTMAGENTA_EX + "| Codigo del usuario: " + Fore.RESET, ar3[i][0], Fore.LIGHTMAGENTA_EX + "| Codigo de local: " + Fore.RESET , ar3[i][1] , Fore.LIGHTMAGENTA_EX + "| Estado: " + Fore.RESET + "Inactivo" + Fore.LIGHTMAGENTA_EX + " |")
     else:
         print(Fore.LIGHTYELLOW_EX + "No se encuentran locales cargados")
+    
+def mostrar_desc():
+    global correo, ar_base, ar_codigos, cant_desc
+
+    i=0
+    while ar_base[i][0]!=correo:
+        i+=1
 
 def limpiar_pantalla():
-    os.system("cls")
+    if os.name == "posix":
+        os.system ("clear")
+    elif os.name == "ce" or os.name == "nt" or os.name == "dos":
+        os.system ("cls")
 
 def orden_bi(arreglo,filas,columnas,co_orden):
     global ar_locales_cod,ar_locales_estado
@@ -326,17 +381,15 @@ def print_menus(tipo):
 
 # Funciones de validacion
 def valid_codigo_usuario():
+    global f_usuarios,tamaño_locales,fila_usuarios
     valido= True
 
     cod=int(input(Fore.LIGHTCYAN_EX + "Ingrese el codigo: " + Fore.RESET))
 
     while valido:
-        ind=0
-        while  (ind <= 2) and (ar_codigos[ind]!=cod) :
-            ind+=1
-
-        if ar_codigos[ind]==cod:
-            if ar_base[ind][2]=="dueñoLocal":
+        verifNombre_n(cod,"codigo")
+        if fila_usuarios.codigo==cod:
+            if  fila_usuarios.tipo=="Dueño de local":
                 valido=False
             else:
                 print(Fore.LIGHTYELLOW_EX + "Usted no es dueño")
@@ -361,6 +414,7 @@ def val_datos_local(dato):
         fila_local=pickle.load(f_locales)
         if fila_local.codigo==dato:
             pos=f_usuarios.tell()
+            local_indice=ind
             fin=False
             fin_cod=True
         else:
@@ -386,7 +440,12 @@ def val_opciones(ar,largo,error,mensaje):
         print(Fore.LIGHTRED_EX + error)
         opt=input(Fore.LIGHTCYAN_EX + mensaje + Fore.RESET)
     return opt
-        
+
+def val_fecha(fecha):
+    if datetime.datetime.strptime(fecha, '%d/%m/%Y'):
+        return True
+    else:
+        return False
 
 #Funcion de construccion
 def en_construccion():
@@ -396,6 +455,12 @@ def en_construccion():
     print(Fore.YELLOW + "|__________________________|")
     print(Fore.YELLOW + "        \ (• ◡ •) /          ")
     print(Fore.YELLOW + "         \       /         ")
+    input()
+    limpiar_pantalla()
+
+def DiagramacionChapin():
+    limpiar_pantalla()
+    print(Fore.YELLOW + "Diagramado en Chapin")
     input()
     limpiar_pantalla()
 
@@ -431,6 +496,18 @@ def guardado_locales(locales,codigos,estados):
     
     f_locales=guardado(ruta_locales,f_locales)
 
+def guardado_promociones(promociones,codigos,dias,estados):
+    global f_promociones,ruta_promociones
+    ind=0
+    while promociones[ind][0]!="":
+        promocion=Promocion(codigos[ind][0],promociones[ind][0],promociones[ind][1],promociones[ind][2],[dias[ind][0],dias[ind][1],dias[ind][2],dias[ind][3],dias[ind][4],dias[ind][5],dias[ind][6]],estados[ind])
+        
+        
+        pickle.dump(promocion,f_promociones)
+        ind+=1
+    
+    f_locales=guardado(ruta_locales,f_locales)
+
 #Funcion del menu de locales   
 def CreacionLocal():
     global limite,cod_local,ar_locales,ar_locales_cod,ar_rubro,ar_locales_estado,cantidadLoc
@@ -453,13 +530,13 @@ def CreacionLocal():
         limpiar_pantalla()
         print(Fore.LIGHTGREEN_EX + "Se a creado con exito el local" + Fore.RESET, nombreLocal, Fore.LIGHTGREEN_EX + "la ubicacion" + Fore.RESET, ubicacionLocal, "\n")
 
+        cod_local+=1
         ar_local_datos=[nombreLocal,ubicacionLocal,rubroLocal]
         
         carga_locales(ar_local_datos,ar_locales,cod_local-1,3)
         ar_locales_estado[cod_local-1]="A"
         ar_locales_cod[cod_local-1][0]=cod_usuario
         ar_locales_cod[cod_local-1][1]=cod_local
-        cod_local+=1
         limite-=1
         cantidadLoc=cantidadLoc+1
         orden_bi(ar_locales,50,3,0)
@@ -473,7 +550,7 @@ def CreacionLocal():
     limpiar_pantalla()
 
 def mod_local():
-    global ar_locales,ar_locales_cod,local_indice,ar_rubro, opc,ar_locales_estado,fin_cod,fila_local
+    global ar_locales,ar_locales_cod,local_indice,ar_rubro, opc,ar_locales_estado,fin_cod,fila_local,pos
 
     opcMOD=["1","2","3","4","5","6"]
     
@@ -531,7 +608,8 @@ def mod_local():
 
 
                     carga_locales( ar_local_datos,ar_locales,local_indice,3)
-                    ar_locales_cod[local_indice][0]=cod_usuario
+                    actualizar_fila(pos,fila_local)
+                    ar_locales_cod[local_indice][0]=fila_local.codUsuario
                     orden_bi(ar_locales,50,4,0)
                 case "2":
                     limpiar_pantalla()
@@ -552,8 +630,8 @@ def mod_local():
                     limpiar_pantalla()
                     cod_usuario=valid_codigo_usuario()
                     ar_locales_cod[local_indice][0]=cod_usuario
-                case "6":
-                    ""
+            
+        print(ar_locales)
             
 def eliminar_local():
     global ar_locales, opc,ar_locales_estado,fin_cod
@@ -607,14 +685,93 @@ def mapa_local():
     print("+--"*5+"+")
     
     getpass.getpass("")
+    
+def BusqDesc():
+ global fecha_actual, fecha_desde, fecha_hasta
+    
+ entrada_cod_local=int(input(Fore.LIGHTCYAN_EX + "Ingrese el codigo del local del que desea encontrar un descuento: " + Fore.RESET))
+
+ while val_datos_local(entrada_cod_local):
+        print(Fore.LIGHTRED_EX + "\nEl codigo no pertenece a ningun local.")
+        entrada_cod_local=int(input(Fore.LIGHTCYAN_EX + "Ingrese el codigo del local del que desea encontrar un descuento: " + Fore.RESET))
+        
+ Fecha_des= input("Ingresar fecha sobre la que desea saber: ")
+ while Fecha_des < fecha_actual:
+        print ("La fecha ingresada ya a pasado.")
+        Fecha_des= input("Ingresar fecha sobre la que desea saber: ")
+ pickle.load(Promocion.Dat)
+ 
+
+def CrearDesc():
+    global fecha_actual, cant_desc, cod_prom, ar_base, ar_codigos, ar_locales_cod, cantidadLoc, correo
+
+    mostrar_desc()
+    
+    desc = input("Texto descriptivo de la oferta: ")
+
+    fecha_actual = datetime.datetime.now().strftime('%d/%m/%Y')
+
+    fecha_desde = input("Fecha donde comienza el descuento: ")
+    fecha_hasta = input("Fecha donde termina el descuento: ")
+    while fecha_desde > fecha_hasta and fecha_desde < fecha_actual:
+        print("Fechas invalidas, vuelva a intentarlo")
+        fecha_desde = input("Fecha donde comienza el descuento: ")
+        fecha_hasta = input("Fecha donde termina el descuento: ")
+    
+    dias=0
+    while dias < 7:
+        print("Dias de la semana que estara vigente el descuento")
+        print(ar_dias_semana[dias])
+        print("¿Se encuentra vigente?")
+        print("1. Si")
+        print("2. No")
+        ar_desc_dias[dias]=input()
+        while ar_desc_dias[dias]!="1" or ar_desc_dias[dias]!="2":
+            print("Error, vuelva a intentarlo")
+            ar_desc_dias[dias]=input()
+        dias=dias+1
+    
+    cod_local=input("Codigo del local al cual desea aplicar el descuento: ")
+    i=0
+    max1=cantidadLoc
+    band=False
+    while band==False:
+        while ar_locales_cod[i][1]!=cod_local or i!=max1:
+            i+=1
+        if ar_locales_cod[i][1]==cod_local:
+            dueño=ar_locales_cod[i][0]
+            j=0
+            while ar_codigos[j]!=dueño:
+                j+=1
+            if ar_base[j][0]==correo:
+                band=True
+            else:
+                print("Codigo invalido, vuelva a intentarlo")
+        else:
+            print("Codigo invalido, vuelva a intentarlo")
+        cod_local=input("Codigo del local al cual desea aplicar el descuento: ")
+
+    ar_desc[cant_desc][0]=desc
+    ar_desc[cant_desc][1]=fecha_desde
+    ar_desc[cant_desc][2]=fecha_hasta
+    ar_desc_cod[cant_desc][0]=cod_prom
+    ar_desc_cod[cant_desc][1]=cod_local
+    ar_desc_estado[cant_desc]="Pendiente"
+    cant_desc+=1
+    cod_prom+=1
+
+    guardado_promociones(ar_desc,ar_desc_cod,ar_desc_dias,ar_desc_estado)
+
 #----------------------------------------------        
 def menu_local(): 
-    global menu
+    global menu,ar_locales
     fin=True
     while fin:
+        carga_ar_locales()
         limpiar_pantalla()
         print_menus("local")
 
+        print(ar_locales)
         accion= val_opciones(menu,4,"\nOpcion no valida","\nIngrese una opcion: ")
        
         match accion:
@@ -630,9 +787,11 @@ def menu_local():
             case "e":
                 limpiar_pantalla()
                 fin=False
+        
 
 def controlar_promocion():
     global f_usuarios
+    
 
 #Funcion del menu de novedades
 def menu_novedades():
@@ -689,11 +848,11 @@ def menuDueño():
 
         match accion:
             case "1":
-                GestionDesc()
+                CrearDesc()
             case "2":
                 en_construccion()
             case "3":
-                en_construccion()
+                DiagramacionChapin()
             case "0":
                 fin=False
                 print(Style.BRIGHT + Fore.BLUE + "\nSALIENDO DEL PROGRAMA\n")
@@ -727,7 +886,7 @@ def menuCliente():
         accion= val_opciones(ar_opciones4,4,"\nOpcion no valida","\nIngrese una opcion: ")
         match accion:
             case "1":
-                en_construccion()
+                BusqDesc()
             case "2":
                 en_construccion()
             case "3":
@@ -768,37 +927,52 @@ def registro_usuario(tipo):
 
 
 def verifNombre_n(nombre,campo):
-    global tipo_usuario,f_usuarios
+    global tipo_usuario,f_usuarios,fila_usuarios
 
     valid=False
     tamaño=os.path.getsize(ruta_usuarios)
 
     while f_usuarios.tell() < tamaño:
-        fila=pickle.load(f_usuarios)
+        fila_usuarios=pickle.load(f_usuarios)
 
-        if fila.__getattribute__(campo)==nombre:
+        if fila_usuarios.__getattribute__(campo)==nombre:
             valid=True
-            tipo_usuario=fila.tipo
+            tipo_usuario=fila_usuarios.tipo
             f_usuarios.seek(tamaño)
     
     f_usuarios.seek(0)
   
     return valid
 
-def ultimo_cod(ruta):
-    global cod_usuario
-    objeto = open (ruta, "r+b") 
-    tamaño=os.path.getsize(ruta)
-    while objeto.tell() < tamaño:
-        pepe=pickle.load(objeto)
-        cod_usuario=pepe.codigo
+def ultimo_cod(archivo,tamaño,tipo):
+
+    mayor=0
+    if tamaño==0:
+        return mayor
+    else:
+       match tipo:
+            case "usuario":
+                while archivo.tell()<tamaño:
+                    fila=pickle.load(archivo)
+                mayor=fila.codigo
+            case "local":
+                while archivo.tell()<tamaño:
+                    fila=pickle.load(archivo)
+                    if fila.codigo > mayor:
+                        mayor=fila.codigo
+            
+    archivo.seek(0)
+    
+    return mayor
+    
 
 def login():
-    global intentos
+    global intentos, correo
     nombreUsuario=input(Style.BRIGHT + Fore.CYAN + "Ingrese el usuario: " + Fore.RESET)
 
     while(intentos!=0):
         chequeo=verifNombre_n(nombreUsuario,"correo")
+        correo=nombreUsuario
         if chequeo:
             claveUsuario=getpass.getpass(Style.BRIGHT + Fore.CYAN + "Ingrese la clave: " + Fore.RESET)
             chequeo2=verifNombre_n(claveUsuario,"clave")
@@ -809,7 +983,7 @@ def login():
                 match tipo_usuario:
                     case "administrador":
                         menuAdmin()
-                    case "dueñoLocal":
+                    case "Dueño de local":
                         menuDueño()
                     case "cliente":
                         menuCliente()
@@ -850,7 +1024,12 @@ def ini():
                 fin=False
 
 #Programa Principal
-ultimo_cod(ruta_usuarios)
-
+print(tamaño_usuarios)
+cod_usuario=ultimo_cod(f_usuarios,tamaño_usuarios,"usuario")
+cod_local=ultimo_cod(f_locales,tamaño_locales,"local")
+print(cod_local)
 ini()
+
+f_locales.close()
+f_usuarios.close()
 

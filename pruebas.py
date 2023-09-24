@@ -74,3 +74,26 @@ def valid_codigo_usuario():
             cod=int(input(Fore.LIGHTCYAN_EX + "Ingrese el codigo: " + Fore.RESET))
     
     return cod
+
+def valid_codigo_usuario():
+    global f_usuarios,tamaño_locales
+    valido= True
+
+    cod=int(input(Fore.LIGHTCYAN_EX + "Ingrese el codigo: " + Fore.RESET))
+
+    while valido:
+        ind=0
+        while  (ind <= 2) and (ar_codigos[ind]!=cod) :
+            ind+=1
+
+        if ar_codigos[ind]==cod:
+            if ar_base[ind][2]=="dueñoLocal":
+                valido=False
+            else:
+                print(Fore.LIGHTYELLOW_EX + "Usted no es dueño")
+                cod=int(input(Fore.LIGHTCYAN_EX + "Ingrese el codigo: " + Fore.RESET))
+        else:
+            print(Fore.LIGHTRED_EX + "Codigo incorrecto")
+            cod=int(input(Fore.LIGHTCYAN_EX + "Ingrese el codigo: " + Fore.RESET))
+    
+    return cod  

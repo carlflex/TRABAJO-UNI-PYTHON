@@ -28,7 +28,9 @@ class Local:
 	    
 user=Usuario(1,"admin@shopping.com","12345","administrador")
 
+cod,correo=vars(user)
 
+print(cod)
 """ pickle.dump(user,alPiezas)
 pickle.load(alPiezas) """
 """ pickle.dump(user2,alPiezas) """

@@ -16,19 +16,21 @@ class Local:
         self.ubicacion=ubicacion
         self.rubro=rubro
         self.estado=estado
-
+ruta_usuarios="./db/usuarios.dat"
+ruta_locales="./db/locales.dat"
         
 def mostrar_contenido(ruta):
     objeto = open (ruta, "r+b") 
     tamaño=os.path.getsize(ruta)
 
-    """ print(tamaño) """
     while objeto.tell() < tamaño:
 
-        pepe=pickle.load(objeto) #Carga el valor en un indice especifico y aumenta el indice en 1
-        valores=vars(pepe) #retorna un diccionario con la clave-valor del objeto, similar al object.values de javaScript
+        fila=pickle.load(objeto) #Carga el valor en un indice especifico y aumenta el indice en 1
+        valores=vars(fila) #retorna un diccionario con la clave-valor del objeto, similar al object.values de javaScript
         print("Tamaño fila", objeto.tell())
         for r1,r2 in zip(valores.keys(),valores.values()): #Recorre 2 arrays al mismo tiempo
              print(f"|| {r1}: ",r2, end=" ")
         print("")
         print("")
+
+""" mostrar_contenido(ruta_locales) """
