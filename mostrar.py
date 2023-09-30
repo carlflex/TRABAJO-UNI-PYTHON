@@ -16,9 +16,20 @@ class Local:
         self.ubicacion=ubicacion
         self.rubro=rubro
         self.estado=estado
+
+class Promocion:
+    def __init__(self):
+        self.codProm=0
+        self.desc=""
+        self.fechaDesde=""
+        self.fechaHasta=""
+        self.dias=[""]*7
+        self.est=""
+        self.codLoc=0
+
 ruta_usuarios="./db/usuarios.dat"
 ruta_locales="./db/locales.dat"
-        
+ruta_promociones="./db/promociones.dat"      
 def mostrar_contenido(ruta):
     objeto = open (ruta, "r+b") 
     tamaño=os.path.getsize(ruta)
@@ -33,4 +44,4 @@ def mostrar_contenido(ruta):
         print("")
         print("")
 
-""" mostrar_contenido(ruta_locales) """
+""" mostrar_contenido(ruta_promociones) """
