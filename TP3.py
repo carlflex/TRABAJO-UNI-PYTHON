@@ -34,6 +34,7 @@ cod_prom=0
 cant_desc=0
 val_clave=0
 
+fecha_actual = datetime.datetime.now().strftime('%d/%m/%Y')
 
 ar_rubro=["indumentaria","comida","perfumeria"]
 
@@ -71,6 +72,7 @@ ruta_usuarios="./db/usuarios.dat"
 ruta_locales="./db/locales.dat"
 ruta_auxiliar="./db/aux.dat"
 ruta_promociones="./db/promociones.dat"
+ruta_usoPromociones="./db/usoPromociones.dat"
 
 def abrir(ruta):
     if not os.path.exists(ruta):   
@@ -106,62 +108,23 @@ class Promocion:
         self.est=""
         self.codLoc=0
 
+class UsoPromocion:
+    def __init__(self):
+        self.codCliente=0
+        self.codPromo=0
+        self.fechaUsoPromo=""
+
 #Carga de arreglos
 f_usuarios=abrir(ruta_usuarios)
 f_locales=abrir(ruta_locales)
 f_promociones=abrir(ruta_promociones)
+f_usoPromociones=abrir(ruta_usoPromociones)
 
 tamaño_usuarios=os.path.getsize(ruta_usuarios)
 tamaño_locales=os.path.getsize(ruta_locales)
-tamaño_promociones=os.path.getsize(ruta_promociones)
 
 fila_local=Local()
 fila_usuarios=Usuario()
-fila_promociones=Promocion()
-
-def carga_ar_locales():
-    global ar_locales,ar_locales_cod,ar_locales_estado,ruta_locales,f_locales
-
-    f_locales.seek(0)
-    ind=0
-    tamaño=os.path.getsize(ruta_locales)
-    while f_locales.tell() < tamaño:
-        fila=pickle.load(f_locales)
-        ar_locales[ind][0]=fila.nombre
-        ar_locales[ind][1]=fila.ubicacion
-        ar_locales[ind][2]=fila.rubro
-
-        ar_locales_cod[ind][0]=fila.codUsuario
-        ar_locales_cod[ind][1]=fila.codigo
-
-        ar_locales_estado[ind]=fila.estado
-        ind+=1
-
-    f_locales.seek(0)
-
-def carga_prom():
-
-    ind=0
-
-    while f_promociones.tell() < tamaño_promociones:
-        fila=pickle.load(f_promociones)
-        ar_desc[ind][0]=fila.desc
-        ar_desc[ind][1]=fila.fechaDesde
-        ar_desc[ind][2]=fila.fechaHasta
-
-        ar_desc_cod[ind][0]=fila.codProm
-        ar_desc_cod[ind][1]=fila.codLoc
-
-        ar_desc_estado[ind]=fila.estado
-
-        dia=0
-        while dia < 6:
-            ar_desc_dias[ind][dia]=fila_promociones.dias[ind][dia]
-            dia+=1
-        
-        ind+=1
-    
-    f_promociones.seek(0)
 
 def guardado(ruta,objeto):
     objeto.close()
@@ -192,6 +155,13 @@ def ultima_fila():
     tamaño=os.path.getsize(ruta_usuarios)
     f_usuarios.seek(tamaño)
 
+def convertir_n(numero):
+    if numero <10:
+        numero="0"+str(numero)
+    else:
+        numero=str(numero)
+    return numero
+
 def ar_orden(arreglo,largo,ar2):
 
     for i in range(1,largo):
@@ -214,7 +184,7 @@ def ar_existe(arreglo,largo,elemento):
         return True
     else:
         return False
-    
+
 def dico(arreglo, elemento):
     q = False
     inicio = 0
@@ -285,7 +255,6 @@ def mostrar_prom():
 
 def busqDueñoActual():
     global correo, ar_base, ar_codigos
-    i=0
     f_usuarios.seek(0)
     fila=pickle.load(f_usuarios)
     while fila.correo!=correo:
@@ -305,6 +274,29 @@ def busqDueñoProm(codPromLoc):
                 fila=pickle.load(f_locales)
         codDueño=fila.codUsuario
         return codDueño
+
+def CantProm():
+    cont=1
+    f_promociones.seek(0)
+    tamaño=os.path.getsize(f_promociones)
+    fila=pickle.load(f_promociones)
+    while f_promociones.tell() < tamaño:
+        cont+=1
+        fila=pickle.load(f_promociones)
+    return cont
+
+def CantUsos(codPromo, fechaDesde, fechaHasta):
+    f_usoPromociones.seek(0)
+    tamaño_usoProm=os.path.getsize(ruta_usoPromociones)
+    fila_usoProm=pickle.load(f_usoPromociones)
+    cont=0
+
+    while fila_usoProm.tell() < tamaño_usoProm:
+        if codPromo==fila_usoProm.codPromo and fechaDesde >= fila_usoProm.fechaUsoPromo and fechaHasta <= fila_usoProm.fechaUsoPromo:
+            cont+=1
+        fila_usoProm=pickle.load(f_usoPromociones)
+
+    return cont
         
 def limpiar_pantalla():
     if os.name == "posix":
@@ -313,21 +305,12 @@ def limpiar_pantalla():
         os.system ("cls")
 
 def orden_bi(arreglo,filas,columnas,co_orden):
-    global ar_locales_cod,ar_locales_estado
-    for i in range(filas-1):
-        for j in range(i+1,filas):
-            if arreglo[i][co_orden]>arreglo[j][co_orden] and arreglo[j][co_orden] !="" :
-                for k in range(columnas):
-                    temp=arreglo[i][k]
-                    arreglo[i][k]=arreglo[j][k]
-                    arreglo[j][k]=temp
-                for w in range(2):
-                    temp=ar_locales_cod[i][w]
-                    ar_locales_cod[i][w]=ar_locales_cod[j][w]
-                    ar_locales_cod[j][w]=temp
-                temp=ar_locales_estado[i]
-                ar_locales_estado[i]=ar_locales_estado[j]
-                ar_locales_estado[j]=temp
+    global ar_locales_cod,ar_locales_estado,f_locales
+
+    tamaño=os.path.getsize()
+    
+    while f_locales.tell()<tamaño:
+        ""
 
 def mostrar_tabla_rub():
     global cont_perfumeria,cont_indumentaria,cont_comida,ar_rubro
@@ -409,29 +392,30 @@ def print_menus(tipo):
             print(Style.DIM + Fore.LIGHTCYAN_EX + "d)" + Fore.RESET + " Mapa de locales")
             print(Style.DIM + Fore.LIGHTCYAN_EX + "e)" + Fore.RESET + " Volver")
         case "inicio":
-            print("BIENVENIDO")
-            print("1.Ingresar como usuario registrado")
-            print("2.Registrarse como cliente")
-            print("3. Salir")
+            print(Style.BRIGHT + Fore.LIGHTMAGENTA_EX + "BIENVENIDO")
+            print(Style.DIM + Fore.LIGHTCYAN_EX + "\n1." + Fore.RESET + " Ingresar con usuario registrado.")
+            print(Style.DIM + Fore.LIGHTCYAN_EX + "2." + Fore.RESET + " Registrarse como cliente.")
+            print(Style.DIM + Fore.LIGHTCYAN_EX + "3." + Fore.RESET + " Salir.")
 
 # Funciones de validacion
 def valid_codigo_usuario():
     global f_usuarios,tamaño_locales,fila_usuarios
     valido= True
 
-    cod=int(input(Fore.LIGHTCYAN_EX + "Ingrese el codigo: " + Fore.RESET))
+    cod=convertir_n(int(input(Fore.LIGHTCYAN_EX + "Ingrese el codigo: " + Fore.RESET)))
 
     while valido:
         verifNombre_n(cod,"codigo")
         if fila_usuarios.codigo==cod:
-            if  fila_usuarios.tipo=="Dueño de local":
+            print(fila_usuarios.tipo.rstrip(" "))
+            if  fila_usuarios.tipo.rstrip(" ")=="Dueño de local":
                 valido=False
             else:
                 print(Fore.LIGHTYELLOW_EX + "Usted no es dueño")
                 cod=int(input(Fore.LIGHTCYAN_EX + "Ingrese el codigo: " + Fore.RESET))
         else:
             print(Fore.LIGHTRED_EX + "Codigo incorrecto")
-            cod=int(input(Fore.LIGHTCYAN_EX + "Ingrese el codigo: " + Fore.RESET))
+            cod=convertir_n(int(input(Fore.LIGHTCYAN_EX + "Ingrese el codigo: " + Fore.RESET)))
     
     return cod     
 
@@ -494,7 +478,7 @@ def val_fecha(fecha):
         return True
     else:
         return False
-
+#--------------------------------------------------------------------
 #Funcion de construccion
 def en_construccion():
     limpiar_pantalla()
@@ -511,7 +495,7 @@ def DiagramacionChapin():
     print(Fore.YELLOW + "Diagramado en Chapin")
     input()
     limpiar_pantalla()
-
+#--------------------------------------------------------
 def operar_contadores(rubro,tipo):
     global cont_comida,cont_indumentaria,cont_perfumeria
 
@@ -566,24 +550,26 @@ def CreacionLocal():
     
     mostrar_Local()
 
-    fila_local.nombre = val_nombre()
+    fila_local.nombre = val_nombre().ljust(50)
 
-    while fila_local.nombre !="*":
+    while fila_local.nombre !="*".ljust(50):
         limpiar_pantalla()
-        fila_local.ubicacion=input(Fore.LIGHTCYAN_EX + "Ingrese la ubicacion: " + Fore.RESET)
+        fila_local.ubicacion=input(Fore.LIGHTCYAN_EX + "Ingrese la ubicacion: " + Fore.RESET).ljust(50)
         limpiar_pantalla()
-        fila_local.rubro=val_opciones(ar_rubro,2,"El rubro no existe, tiene estas opciones: indumentaria, perfumeria, comida","Ingrese el rubro: ")
+        fila_local.rubro=val_opciones(ar_rubro,2,"El rubro no existe, tiene estas opciones: indumentaria, perfumeria, comida","Ingrese el rubro: ").ljust(50)
 
         limpiar_pantalla()
         fila_local.codUsuario=valid_codigo_usuario()
         
-        operar_contadores(fila_local.rubro,"aumentar")
+        operar_contadores(fila_local.rubro.rsplit(" "),"aumentar")
                     
         limpiar_pantalla()
         print(Fore.LIGHTGREEN_EX + "Se a creado con exito el local" + Fore.RESET, fila_local.nombre, Fore.LIGHTGREEN_EX + "la ubicacion" + Fore.RESET, fila_local.ubicacion, "\n")
 
         cod_local+=1
-        fila_local.codigo=cod_local
+        print(cod_local)
+        print(convertir_n(cod_local))
+        fila_local.codigo=convertir_n(cod_local)
         
         fila_local.estado="A"
 
@@ -594,7 +580,7 @@ def CreacionLocal():
         print(Back.LIGHTGREEN_EX + f"\nEspacio disponible: {limite} ")
         input()
         limpiar_pantalla()
-        fila_local.nombre= val_nombre()
+        fila_local.nombre= val_nombre().ljust(50)
 
    
     limpiar_pantalla()
@@ -607,11 +593,11 @@ def mod_local():
     limpiar_pantalla()
     mostrar_Local()
 
-    entrada_cod_local=int(input(Fore.LIGHTCYAN_EX + "Ingrese el codigo del local que desea modificar: " + Fore.RESET))
+    entrada_cod_local=convertir_n(int(input(Fore.LIGHTCYAN_EX + "Ingrese el codigo del local que desea modificar: " + Fore.RESET)))
 
     while val_datos_local(entrada_cod_local):
         print(Fore.LIGHTRED_EX + "\nCodigo no existe")
-        entrada_cod_local=int(input(Fore.LIGHTCYAN_EX + "Ingrese el codigo del local que desea modificar: " + Fore.RESET))
+        entrada_cod_local=convertir_n(int(input(Fore.LIGHTCYAN_EX + "Ingrese el codigo del local que desea modificar: " + Fore.RESET)))
     
     limpiar_pantalla()
 
@@ -639,48 +625,44 @@ def mod_local():
             print(Fore.LIGHTCYAN_EX + "6. " + Fore.RESET + "Volver")
 
             accion=val_opciones(opcMOD,5,"Opcion no valida","\nIngrese una opcion: ")
-            
+            aux=fila_local.rubro
             match accion:
                 case "1":
                     limpiar_pantalla()
                     fila_local.nombre= val_nombre()
                     limpiar_pantalla()
-                    fila_local.ubicacion=input(Fore.LIGHTCYAN_EX + "Ingrese la ubicacion: " + Fore.RESET)
+                    fila_local.ubicacion=input(Fore.LIGHTCYAN_EX + "Ingrese la ubicacion: " + Fore.RESET).ljust(50)
                     limpiar_pantalla()
-                    fila_local.rubro=val_opciones(ar_rubro,2,"El rubro no existe, tiene estas opciones: indumentaria, perfumeria, comida","Ingrese el rubro: ")
+                  
+                    fila_local.rubro=val_opciones(ar_rubro,2,"El rubro no existe, tiene estas opciones: indumentaria, perfumeria, comida","Ingrese el rubro: ").ljust(50)
                     limpiar_pantalla()
                     fila_local.codUsuario=valid_codigo_usuario()
                     limpiar_pantalla()
-                    operar_contadores(ar_locales[local_indice][2],"restar")
-                    operar_contadores(fila_local.rubro,"aumentar")
+                    operar_contadores(aux.rstrip(" "),"restar")
+                    operar_contadores(fila_local.rubro.rstrip(" "),"aumentar")
 
-                    ar_local_datos=[fila_local.nombre,fila_local.ubicacion,fila_local.rubro]
-
-
-                    carga_locales( ar_local_datos,ar_locales,local_indice,3)
                     actualizar_fila(pos,fila_local)
                     ar_locales_cod[local_indice][0]=fila_local.codUsuario
                     orden_bi(ar_locales,50,4,0)
                 case "2":
                     limpiar_pantalla()
                     nombreLocal= val_nombre()
-                    ar_locales[local_indice][0]=nombreLocal
+        
                     orden_bi(ar_locales,50,4,0)
                 case "3":
                     limpiar_pantalla()
-                    ubicacionLocal=input(Fore.LIGHTCYAN_EX + "Ingrese la ubicacion: " + Fore.RESET)
-                    ar_locales[local_indice][1]=ubicacionLocal
+                    ubicacionLocal=input(Fore.LIGHTCYAN_EX + "Ingrese la ubicacion: " + Fore.RESET).ljust(50)
+                   
                 case "4":
                     limpiar_pantalla()
-                    rubroLocal=val_opciones(ar_rubro,2,"El rubro no existe, tiene estas opciones: indumentaria, perfumeria, comida","Ingrese el rubro: ")
-                    operar_contadores(ar_locales[local_indice][2],"restar")
+                    rubroLocal=val_opciones(ar_rubro,2,"El rubro no existe, tiene estas opciones: indumentaria, perfumeria, comida","Ingrese el rubro: ").ljust(50)
+                    operar_contadores(aux.rstrip(" "),"restar")
                     operar_contadores(rubroLocal,"aumentar")
-                    ar_locales[local_indice][2]=rubroLocal
+                
                 case "5":
                     limpiar_pantalla()
                     cod_usuario=valid_codigo_usuario()
-                    ar_locales_cod[local_indice][0]=cod_usuario
-            
+               
         print(ar_locales)
             
 def eliminar_local():
@@ -737,19 +719,20 @@ def mapa_local():
     getpass.getpass("")
     
 def BusqDesc():
- global fecha_actual, fecha_desde, fecha_hasta
+ global fecha_actual
     
- entrada_cod_local=int(input(Fore.LIGHTCYAN_EX + "Ingrese el codigo del local del que desea encontrar un descuento: " + Fore.RESET))
+ cod_local_des=int(input(Fore.LIGHTCYAN_EX + "Ingrese el codigo del local del que desea encontrar un descuento: " + Fore.RESET))
 
- while val_datos_local(entrada_cod_local):
+ while val_datos_local(cod_local_des):
         print(Fore.LIGHTRED_EX + "\nEl codigo no pertenece a ningun local.")
-        entrada_cod_local=int(input(Fore.LIGHTCYAN_EX + "Ingrese el codigo del local del que desea encontrar un descuento: " + Fore.RESET))
+        cod_local_des=int(input(Fore.LIGHTCYAN_EX + "Ingrese el codigo del local del que desea encontrar un descuento: " + Fore.RESET))
         
  Fecha_des= input("Ingresar fecha sobre la que desea saber: ")
  while Fecha_des < fecha_actual:
         print ("La fecha ingresada ya a pasado.")
         Fecha_des= input("Ingresar fecha sobre la que desea saber: ")
- pickle.load(Promocion.Dat)
+
+        prom_disponible()
  
 
 def CrearDesc():
@@ -767,12 +750,7 @@ def CrearDesc():
         cod_local=int(input("Ingrese el codigo de local al cual desea aplicar la oferta: "))
         verif=val_cod_local(cod_local)
 
-    if tamaño_prom!=0:
-        f_promociones.seek(tamaño_prom)
-        fila=pickle.load(f_promociones)
-        cod_prom=fila.codPromo+1
-    else:
-        cod_prom=1
+    cod_prom=CantProm()
 
     desc = input("Texto descriptivo de la oferta: ")
 
@@ -795,17 +773,54 @@ def CrearDesc():
         fila_prom.dias[dia]=input()
         while fila_prom.dias[dia]!="1" and fila_prom.dias[dia]!="0":
             print("Error, vuelva a intentarlo")
-            ar_desc_dias[dia]=input()
+            fila_prom.dias[dia]=input()
         dia=dia+1
 
-    fila_prom.codProm=cod_prom
+    fila_prom.codProm=convertir_n(cod_prom)
     fila_prom.desc=desc
     fila_prom.fechaDesde=fecha_desde
     fila_prom.fechaHasta=fecha_hasta
     fila_prom.est="Pendiente"
-    fila_prom.codLoc=cod_local
+    fila_prom.codLoc=convertir_n(cod_local)
 
     guardado_promociones(fila_prom)
+
+def Reporte():
+    global fecha_actual
+
+    f_locales.seek(0)
+    tamaño_loc=os.path.getsize(ruta_locales)
+    fila_loc=pickle.load(f_locales)
+
+    f_promociones.seek(0)
+    tamaño_prom=os.path.getsize(ruta_promociones)
+
+    print("Ingrese un rango de fechas para generar el reporte: ")
+    fecha_desde = input("Fecha inicial: ")
+    fecha_hasta = input("Fecha final: ")
+    while fecha_desde > fecha_hasta and fecha_desde < fecha_actual:
+        print("Fechas invalidas, vuelva a intentarlo")
+        fecha_desde = input("Fecha inicial: ")
+        fecha_hasta = input("Fecha final: ")
+
+    limpiar_pantalla()
+
+    print("Titulo del Informe")
+    print("Fecha Desde: ", fecha_desde, "   ", "Fecha Hasta: ", fecha_hasta)
+    while fila_loc.tell() < tamaño_loc:
+        dueño=busqDueñoActual()
+        if dueño==fila_loc.codUsuario:
+            cod_loc=fila_loc.codigo
+            nom=fila_loc.nombre
+            print("\nLocal ", cod_local, ": ", nom, "\n")
+            print("|Codigo Promo|Texto|Fecha desde|Fecha hasta|Cantidad de usos|")
+            fila_prom=pickle.load(f_promociones)
+            while fila_prom.tell() < tamaño_prom:
+                cant=CantUsos(fila_prom.codProm, fecha_desde, fecha_hasta)
+                if cod_loc==fila_prom.codLoc and fila_prom.fechaDesde>=fecha_desde and fila_prom.fechaHasta>=fecha_hasta and fila_prom.estado=="Aprobado":
+                    print("|", fila_prom.codProm, "|" , fila_prom.desc, "|" , fila_prom.fechaDesde, "|" , fila_prom.fechaHasta, "|" , cant, "|")
+                fila_prom=pickle.load(f_promociones)
+        fila_loc=pickle.load(f_locales)
 
 #----------------------------------------------        
 def menu_local(): 
@@ -894,7 +909,7 @@ def menuDueño():
             case "1":
                 CrearDesc()
             case "2":
-                en_construccion()
+                Reporte()
             case "3":
                 DiagramacionChapin()
             case "0":
@@ -947,23 +962,26 @@ def registro_usuario(tipo):
     global f_usuarios,cod_usuario,ruta_usuarios
 
     nuevo_usuario=Usuario()
-    nuevo_usuario.correo=input("Ingrese el correo: ")
+    nuevo_usuario.correo=input("Ingrese el correo: ").ljust(100)
 
 
     while verifNombre_n(nuevo_usuario.correo,"correo"):
-        nuevo_usuario.correo=input("Ingrese el correo: ")
+        nuevo_usuario.correo=input("Ingrese el correo: ").ljust(100)
     
     nuevo_usuario.clave=input("Ingrese la clave: ")
 
-    while len(nuevo_usuario.clave) != 8:
+    while nuevo_usuario.clave=="":
         nuevo_usuario.clave=input("Ingrese la clave: ")
 
-
+    nuevo_usuario.clave.ljust(8)
     if tipo=="cli":
-        nuevo_usuario.tipo="cliente"
+        nuevo_usuario.tipo="cliente".ljust(20)
     else:
-        nuevo_usuario.tipo="Dueño de local"
-    nuevo_usuario.codigo=cod_usuario+1
+        nuevo_usuario.tipo="Dueño de local".ljust(20)
+    cod_usuario+=1
+    
+    nuevo_usuario.codigo=convertir_n(cod_usuario)
+
     ultima_fila()
     
     pickle.dump(nuevo_usuario,f_usuarios)
@@ -979,10 +997,10 @@ def verifNombre_n(nombre,campo):
     while f_usuarios.tell() < tamaño:
         fila_usuarios=pickle.load(f_usuarios)
 
-        if fila_usuarios.__getattribute__(campo)==nombre:
+        if fila_usuarios.__getattribute__(campo).rstrip(" ")==nombre:
             valid=True
             tipo_usuario=fila_usuarios.tipo
-            val_clave=fila_usuarios.clave
+            val_clave=fila_usuarios.clave.rstrip(" ")
             f_usuarios.seek(tamaño)
     
     f_usuarios.seek(0)
@@ -999,12 +1017,12 @@ def ultimo_cod(archivo,tamaño,tipo):
             case "usuario":
                 while archivo.tell()<tamaño:
                     fila=pickle.load(archivo)
-                mayor=fila.codigo
+                mayor=int(fila.codigo)
             case "local":
                 while archivo.tell()<tamaño:
                     fila=pickle.load(archivo)
-                    if fila.codigo > mayor:
-                        mayor=fila.codigo
+                    if int(fila.codigo) > mayor:
+                        mayor=int(fila.codigo)
             
     archivo.seek(0)
     
@@ -1044,7 +1062,7 @@ def login():
                 print(Style.BRIGHT + Fore.GREEN + "Ingreso exitoso\n")
                 intentos=0 
                 
-                match tipo_usuario:
+                match tipo_usuario.rstrip(" "):
                     case "administrador":
                         menuAdmin()
                     case "Dueño de local":

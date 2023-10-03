@@ -44,4 +44,4 @@ def mostrar_contenido(ruta):
         print("")
         print("")
 
-""" mostrar_contenido(ruta_promociones) """
+""" mostrar_contenido(ruta_locales) """
