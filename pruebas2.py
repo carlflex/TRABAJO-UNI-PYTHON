@@ -24,11 +24,11 @@ class Usuario:
 af=abrir(ruta_usuarios)
 
 
-""" f=Usuario("01","admin@shopping.com".ljust(100),"12345".ljust(8),"administrador".ljust(20))
+f=Usuario("01","admin@shopping.com".ljust(100),"12345".ljust(8),"administrador".ljust(20))
 
 pickle.dump(f,af)
 
-af.close() """
+af.close()
 
 """ f=pickle.load(af)
 pepe="admin@shopping.com"

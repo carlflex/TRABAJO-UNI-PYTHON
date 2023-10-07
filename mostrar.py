@@ -29,7 +29,14 @@ class Promocion:
 
 ruta_usuarios="./db/usuarios.dat"
 ruta_locales="./db/locales.dat"
-ruta_promociones="./db/promociones.dat"      
+ruta_promociones="./db/promociones.dat" 
+ruta_aux="./db/aux.dat"
+
+pepe={"pepe":23234,"valor":3434}
+
+
+
+
 def mostrar_contenido(ruta):
     objeto = open (ruta, "r+b") 
     tamaño=os.path.getsize(ruta)
@@ -38,10 +45,11 @@ def mostrar_contenido(ruta):
 
         fila=pickle.load(objeto) #Carga el valor en un indice especifico y aumenta el indice en 1
         valores=vars(fila) #retorna un diccionario con la clave-valor del objeto, similar al object.values de javaScript
+       
         print("Tamaño fila", objeto.tell())
         for r1,r2 in zip(valores.keys(),valores.values()): #Recorre 2 arrays al mismo tiempo
              print(f"|| {r1}: ",r2, end=" ")
         print("")
         print("")
 
-""" mostrar_contenido(ruta_locales) """
+mostrar_contenido(ruta_aux)

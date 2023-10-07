@@ -12,6 +12,7 @@ from tabulate import tabulate
 from colorama import init, Fore, Back, Style
 from mostrar import mostrar_contenido
 import datetime
+
 init(autoreset=True)
 
 #Variables globales
@@ -126,19 +127,6 @@ tamaño_locales=os.path.getsize(ruta_locales)
 fila_local=Local()
 fila_usuarios=Usuario()
 
-def guardado(ruta,objeto):
-    objeto.close()
-    objeto = open (ruta, "r+b")
-
-    return objeto
-
-def borrado():
-    global f_locales,ruta_locales,ruta_auxiliar
-
-    """ aux=open(ruta_auxiliar,"r+b") """
-
-    os.path
-
 def actualizar_fila(pos,e):
     global f_locales,ruta_locales
 
@@ -147,7 +135,6 @@ def actualizar_fila(pos,e):
     f_locales.seek(0) 
 
    
-
 #funciones de utilidad
 def ultima_fila():
     global f_usuarios,ruta_usuarios
@@ -242,7 +229,7 @@ def mostrar_prom():
     tamaño=os.path.getsize(ruta_promociones)
     if tamaño!=0:
         f_promociones.seek(0)
-        cod_dueño=busqDueñoActual()
+        cod_dueño=busqUsuarioActual()
         fila=pickle.load(f_promociones)
         while f_promociones.tell() < tamaño:
             cod_prom_local=fila.codLoc
@@ -253,7 +240,7 @@ def mostrar_prom():
                 print("| Codigo Promocion: ", fila.codProm, "| Descripcion: ", fila.desc, "| Fecha de comienzo: ", fila.fechaDesde, "| Fecha de finalizacion: ", fila.fechaHasta, "| Dias: ", ar_desc_dias[0] ,"-", ar_desc_dias[1] ,"-", ar_desc_dias[2] ,"-", ar_desc_dias[3] ,"-", ar_desc_dias[4] ,"-", ar_desc_dias[5] ,"-", ar_desc_dias[6], "| Estado: ", fila.est, "| Codigo del Local: ", fila.codLoc, " |")
             fila=pickle.load(f_promociones)
 
-def busqDueñoActual():
+def busqUsuarioActual():
     global correo, ar_base, ar_codigos
     f_usuarios.seek(0)
     fila=pickle.load(f_usuarios)
@@ -350,32 +337,17 @@ def print_menus(tipo):
             print(Style.DIM + Fore.LIGHTCYAN_EX + "4." + Fore.RESET + " Gestion de Novedades")
             print(Style.DIM + Fore.LIGHTCYAN_EX + "5." + Fore.RESET + " Reporte de utilización de descuentos")
             print(Style.DIM + Fore.LIGHTCYAN_EX + "0." + Fore.RESET + " Salir")
-        case "descuento":
-            print(Style.BRIGHT + Fore.MAGENTA + "MENU DUEÑOS DE LOCALES")
-            print(Style.NORMAL + Fore.LIGHTMAGENTA_EX + "\n1." + Fore.RESET + " Gestión de Descuentos")
-            print(Style.DIM + Fore.LIGHTCYAN_EX + "   a)" + Fore.RESET + " Crear descuento para mi local")
-            print(Style.DIM + Fore.LIGHTCYAN_EX + "   b)" + Fore.RESET + " Modificar descuento de mi local")
-            print(Style.DIM + Fore.LIGHTCYAN_EX + "   c)" + Fore.RESET + " Eliminar descuento de mi local")
-            print(Style.DIM + Fore.LIGHTCYAN_EX + "   d)" + Fore.RESET + " Volver")
-            print(Style.NORMAL + Fore.LIGHTMAGENTA_EX + "2." + Fore.RESET + " Aceptar / Rechazar pedido de descuento")
-            print(Style.NORMAL + Fore.LIGHTMAGENTA_EX + "3." + Fore.RESET + " Reporte de uso de descuentos")
-            print(Style.NORMAL + Fore.LIGHTMAGENTA_EX + "0." + Fore.RESET + " Salir")
         case "cliente":
             print(Style.BRIGHT + Fore.MAGENTA + "MENU CLIENTES")
-            print(Style.DIM + Fore.LIGHTCYAN_EX + "\n1." + Fore.RESET + " Registrarme")
-            print(Style.DIM + Fore.LIGHTCYAN_EX + "2." + Fore.RESET + " Buscar descuentos en locales")
-            print(Style.DIM + Fore.LIGHTCYAN_EX + "3." + Fore.RESET + " Solicitar descuento")
-            print(Style.DIM + Fore.LIGHTCYAN_EX + "4." + Fore.RESET + " Ver novedades")
+            print(Style.DIM + Fore.LIGHTCYAN_EX + "\n1." + Fore.RESET + " Buscar descuentos en local")
+            print(Style.DIM + Fore.LIGHTCYAN_EX + "2." + Fore.RESET + " Solicitar descuento")
+            print(Style.DIM + Fore.LIGHTCYAN_EX + "3." + Fore.RESET + " Ver novedades")
             print(Style.DIM + Fore.LIGHTCYAN_EX + "0." + Fore.RESET + " Salir")
         case "dueño":
             print(Style.BRIGHT + Fore.MAGENTA + "MENU DUEÑOS DE LOCALES")
-            print(Style.NORMAL + Fore.LIGHTCYAN_EX + "\n1." + Fore.RESET + " Gestión de Descuentos")
-            print(Style.DIM + Fore.LIGHTMAGENTA_EX + "   a)" + Fore.RESET + " Crear descuento para mi local")
-            print(Style.DIM + Fore.LIGHTMAGENTA_EX + "   b)" + Fore.RESET + " Modificar descuento de mi local")
-            print(Style.DIM + Fore.LIGHTMAGENTA_EX + "   c)" + Fore.RESET + " Eliminar descuento de mi local")
-            print(Style.DIM + Fore.LIGHTMAGENTA_EX + "   d)" + Fore.RESET + " Volver")
-            print(Style.NORMAL + Fore.LIGHTCYAN_EX + "2." + Fore.RESET + " Aceptar / Rechazar pedido de descuento")
-            print(Style.NORMAL + Fore.LIGHTCYAN_EX + "3." + Fore.RESET + " Reporte de uso de descuentos")
+            print(Style.NORMAL + Fore.LIGHTCYAN_EX + "\n1." + Fore.RESET + " Crear descuento")
+            print(Style.NORMAL + Fore.LIGHTCYAN_EX + "2." + Fore.RESET + " Reporte de uso de descuentos")
+            print(Style.NORMAL + Fore.LIGHTCYAN_EX + "3." + Fore.RESET + " Ver novedades")
             print(Style.NORMAL + Fore.LIGHTCYAN_EX + "0." + Fore.RESET + " Salir")
         case "novedades":
             print(Style.BRIGHT + Fore.LIGHTMAGENTA_EX + "GESTION DE NOVEDADES")
@@ -454,6 +426,36 @@ def val_cod_local(dato):
     
     return fin
 
+def val_cod_prom(dato):
+    global fecha_actual
+    
+    band=True
+    fin=True
+    f_promociones.seek(0)
+    tamaño_locales=os.path.getsize(ruta_promociones)
+
+    while f_promociones.tell() < tamaño_locales and band:
+        fila_prom=pickle.load(f_promociones)
+        if fila_prom.codProm==dato:
+            band=False
+
+    if fila_prom.codProm==dato:
+        if fila_prom.estado=="Aprobada":
+            if fecha_actual >= fila_prom.fechaDesde and fecha_actual <= fila_prom.fechaHasta:
+                dia=fecha_actual.weekday()
+                if fila_prom.dias[dia]==1:
+                    fin=False
+                else:
+                    print("Error, codigo no valido para este dia de la semana")
+            else:
+                print("Error, codigo no valido en esta fecha")
+        else:
+            print("Error, esta promocion todavia no ha sido aprobada")
+    else:
+        print("Codigo inexistente")
+    
+    return fin
+
 def val_nombre():
     global ar_locales
     nombre=input(Fore.LIGHTCYAN_EX + "Ingrese el nombre: " + Fore.RESET)
@@ -492,7 +494,11 @@ def en_construccion():
 
 def DiagramacionChapin():
     limpiar_pantalla()
-    print(Fore.YELLOW + "Diagramado en Chapin")
+    print(Fore.YELLOW + "|￣￣￣￣￣￣￣￣￣￣￣￣￣￣|")
+    print(Fore.YELLOW + "   DIAGRAMACION EN CHAPIN    ")
+    print(Fore.YELLOW + "|__________________________|")
+    print(Fore.YELLOW + "        \ (• ◡ •) /          ")
+    print(Fore.YELLOW + "         \       /         ")
     input()
     limpiar_pantalla()
 #--------------------------------------------------------
@@ -525,24 +531,19 @@ def guardado_locales(e):
 
     f_locales.flush()
 
-def guardado_promociones(promociones,codigos,dias,estados):
-    global f_promociones,ruta_promociones
-    ind=0
-    while promociones[ind][0]!="":
-        promocion=Promocion(codigos[ind][0],promociones[ind][0],promociones[ind][1],promociones[ind][2],[dias[ind][0],dias[ind][1],dias[ind][2],dias[ind][3],dias[ind][4],dias[ind][5],dias[ind][6]],estados[ind])
-        
-        
-        pickle.dump(promocion,f_promociones)
-        ind+=1
-    
-    f_locales=guardado(ruta_locales,f_locales)
-
 def guardado_promociones(e):
     global f_promociones,ruta_promociones
     
     pickle.dump(e,f_promociones)
 
     f_promociones.flush()
+
+def guardado_usoPromociones(e):
+    global f_usoPromociones,ruta_usoPromociones
+    
+    pickle.dump(e,f_usoPromociones)
+
+    f_usoPromociones.flush()
 
 #Funcion del menu de locales   
 def CreacionLocal():
@@ -557,8 +558,9 @@ def CreacionLocal():
         fila_local.ubicacion=input(Fore.LIGHTCYAN_EX + "Ingrese la ubicacion: " + Fore.RESET).ljust(50)
         limpiar_pantalla()
         fila_local.rubro=val_opciones(ar_rubro,2,"El rubro no existe, tiene estas opciones: indumentaria, perfumeria, comida","Ingrese el rubro: ").ljust(50)
-
+        
         limpiar_pantalla()
+        print(len(fila_local.rubro))
         fila_local.codUsuario=valid_codigo_usuario()
         
         operar_contadores(fila_local.rubro.rsplit(" "),"aumentar")
@@ -610,8 +612,9 @@ def mod_local():
             accion=val_opciones(opc,1,"Opcion no valida","\nIngrese una opcion: ")
 
             if accion=="1":
-                ar_locales_estado[local_indice]="A"
-                operar_contadores(ar_locales[local_indice][2],"aumentar")
+                fila_local.estado="A"
+                operar_contadores(fila_local.rubro.strip(" "),"aumentar")
+                actualizar_fila(pos,fila_local)
 
         if fila_local.estado=="A":
             limpiar_pantalla()
@@ -642,31 +645,38 @@ def mod_local():
                     operar_contadores(fila_local.rubro.rstrip(" "),"aumentar")
 
                     actualizar_fila(pos,fila_local)
-                    ar_locales_cod[local_indice][0]=fila_local.codUsuario
+                   
                     orden_bi(ar_locales,50,4,0)
                 case "2":
                     limpiar_pantalla()
-                    nombreLocal= val_nombre()
-        
+                    fila_local.nombre= val_nombre()
+
+                    actualizar_fila(pos,fila_local)
+
                     orden_bi(ar_locales,50,4,0)
                 case "3":
                     limpiar_pantalla()
-                    ubicacionLocal=input(Fore.LIGHTCYAN_EX + "Ingrese la ubicacion: " + Fore.RESET).ljust(50)
+                    fila_local.ubicacion=input(Fore.LIGHTCYAN_EX + "Ingrese la ubicacion: " + Fore.RESET).ljust(50)
                    
+                    actualizar_fila(pos,fila_local)
                 case "4":
                     limpiar_pantalla()
-                    rubroLocal=val_opciones(ar_rubro,2,"El rubro no existe, tiene estas opciones: indumentaria, perfumeria, comida","Ingrese el rubro: ").ljust(50)
+                    fila_local.rubro=val_opciones(ar_rubro,2,"El rubro no existe, tiene estas opciones: indumentaria, perfumeria, comida","Ingrese el rubro: ").ljust(50)
                     operar_contadores(aux.rstrip(" "),"restar")
-                    operar_contadores(rubroLocal,"aumentar")
-                
+                    operar_contadores(fila_local.rubro.rstrip(" "),"aumentar")
+
+                    actualizar_fila(pos,fila_local)
+
                 case "5":
                     limpiar_pantalla()
-                    cod_usuario=valid_codigo_usuario()
+                    fila_local.codUsuario=valid_codigo_usuario()
+
+                    actualizar_fila(pos,fila_local)
                
         print(ar_locales)
             
 def eliminar_local():
-    global ar_locales, opc,ar_locales_estado,fin_cod
+    global ar_locales, opc,ar_locales_estado,fin_cod,fila_local
 
     limpiar_pantalla()
     mostrar_Local()
@@ -687,8 +697,8 @@ def eliminar_local():
         opcion=val_opciones(opc,1,"Opcion no valida","\nIngrese una opcion: ")
 
         if opcion =="1":
-            ar_locales_estado[local_indice]="B"
-            operar_contadores(ar_locales[local_indice][2],"restar")
+            fila_local.estado="B"
+            operar_contadores(fila_local.rubro.rstrip(" "),"restar")
 
 def limite_local():
     global limite
@@ -717,26 +727,88 @@ def mapa_local():
     print("+--"*5+"+")
     
     getpass.getpass("")
+
+def ReporteAdmin():
+    global fecha_actual
+
+    f_locales.seek(0)
+    tamaño_loc=os.path.getsize(ruta_locales)
+    fila_loc=pickle.load(f_locales)
+
+    f_promociones.seek(0)
+    tamaño_prom=os.path.getsize(ruta_promociones)
+
+    print("Ingrese un rango de fechas para generar el reporte: ")
+    verif=True
+    while verif:
+        try:
+            fecha_desde = input("Fecha inicial: ")
+            fecha_hasta = input("Fecha final: ")
+            datetime.datetime.strptime(fecha_desde,'%d/%m/%Y')
+            datetime.datetime.strptime(fecha_hasta,'%d/%m/%Y')
+            verif=False
+        except ValueError or fecha_desde > fecha_hasta and fecha_desde < fecha_actual: 
+            print("Fechas invalidas")
+
+    limpiar_pantalla()
+
+    print("Titulo del Informe")
+    print("Fecha Desde: ", fecha_desde, "   ", "Fecha Hasta: ", fecha_hasta)
+    while fila_loc.tell() < tamaño_loc:
+        print("|Codigo Promo|Texto|Fecha desde|Fecha hasta|Cantidad de usos|")
+        fila_prom=pickle.load(f_promociones)
+        while fila_prom.tell() < tamaño_prom:
+            cant=CantUsos(fila_prom.codProm, fecha_desde, fecha_hasta)
+            if fila_loc.codigo==fila_prom.codLoc and fila_prom.fechaDesde>=fecha_desde and fila_prom.fechaHasta>=fecha_hasta and fila_prom.estado=="Aprobado":
+                print("|", fila_prom.codProm, "|" , fila_prom.desc, "|" , fila_prom.fechaDesde, "|" , fila_prom.fechaHasta, "|" , cant, "|")
+            fila_prom=pickle.load(f_promociones)
+        fila_loc=pickle.load(f_locales)
     
 def BusqDesc():
- global fecha_actual
-    
- cod_local_des=int(input(Fore.LIGHTCYAN_EX + "Ingrese el codigo del local del que desea encontrar un descuento: " + Fore.RESET))
-
- while val_datos_local(cod_local_des):
-        print(Fore.LIGHTRED_EX + "\nEl codigo no pertenece a ningun local.")
-        cod_local_des=int(input(Fore.LIGHTCYAN_EX + "Ingrese el codigo del local del que desea encontrar un descuento: " + Fore.RESET))
+    global fecha_actual
         
- Fecha_des= input("Ingresar fecha sobre la que desea saber: ")
- while Fecha_des < fecha_actual:
-        print ("La fecha ingresada ya a pasado.")
-        Fecha_des= input("Ingresar fecha sobre la que desea saber: ")
+    cod_local_des=int(input(Fore.LIGHTCYAN_EX + "Ingrese el codigo del local del que desea encontrar un descuento: " + Fore.RESET))
 
-        prom_disponible()
- 
+    while val_datos_local(cod_local_des):
+            print(Fore.LIGHTRED_EX + "\nEl codigo no pertenece a ningun local.")
+            cod_local_des=int(input(Fore.LIGHTCYAN_EX + "Ingrese el codigo del local del que desea encontrar un descuento: " + Fore.RESET))
+            
+    verif=True
+    while verif:
+        try:
+            fechaDes = input("Ingresa la fecha en la que desea buscar un descuento en formato DD/MM/AAAA")
+            datetime.datetime.strptime(fechaDes,'%d/%m/%Y')
+            verif=False
+        except ValueError or fechaDes<fecha_actual:
+            print("Fecha invalida o ya pasada.")
+
+    tamaño_prom=os.path.getsize(ruta_promociones)
+    f_promociones.seek(tamaño_prom)
+
+def SolDesc():
+    global fecha_actual
+
+    tamaño_usoProm=os.path.getsize(ruta_usoPromociones)
+    f_usoPromociones.seek(tamaño_usoProm)
+    fila_usoProm=UsoPromocion()
+    
+    cod=int(input("Codigo de la promocion que quiere utilizar: "))
+    verif=val_cod_prom(cod)
+    while verif==True:
+        print("Vuelva a intentarlo")
+        cod=int(input("Codigo de la promocion que quiere utilizar: "))
+        verif=val_cod_prom(cod)
+    
+    codCliente=busqUsuarioActual
+    
+    fila_usoProm.codCliente=convertir_n(codCliente)
+    fila_usoProm.codPromo=convertir_n(cod)
+    fila_usoProm.fechaUsoPromo=fecha_actual
+
+    guardado_usoPromociones(fila_usoProm)
 
 def CrearDesc():
-    global fecha_actual, cod_prom, ar_base, ar_codigos, ar_locales_cod, cantidadLoc, correo
+    global fecha_actual, ar_base, ar_codigos, ar_locales_cod, cantidadLoc, correo
 
     mostrar_prom()
 
@@ -747,21 +819,24 @@ def CrearDesc():
     cod_local=int(input("Ingrese el codigo de local al cual desea aplicar la oferta: "))
     verif=val_cod_local(cod_local)
     while verif==True:
+        print("Error, vuelva a intentarlo")
         cod_local=int(input("Ingrese el codigo de local al cual desea aplicar la oferta: "))
         verif=val_cod_local(cod_local)
 
     cod_prom=CantProm()
 
-    desc = input("Texto descriptivo de la oferta: ")
-
-    fecha_actual = datetime.datetime.now().strftime('%d/%m/%Y')
-
-    fecha_desde = input("Fecha cuando comienza el descuento: ")
-    fecha_hasta = input("Fecha cuando termina el descuento: ")
-    while fecha_desde > fecha_hasta and fecha_desde < fecha_actual:
-        print("Fechas invalidas, vuelva a intentarlo")
-        fecha_desde = input("Fecha cuando comienza el descuento: ")
-        fecha_hasta = input("Fecha cuando termina el descuento: ")
+    desc = input("Texto descriptivo de la oferta: ").ljust(200)
+    
+    verif=True
+    while verif:
+        try:
+            fecha_desde = input("Fecha cuando comienza el descuento: ")
+            fecha_hasta = input("Fecha cuando termina el descuento: ")
+            datetime.datetime.strptime(fecha_desde,'%d/%m/%Y')
+            datetime.datetime.strptime(fecha_hasta,'%d/%m/%Y')
+            verif=False
+        except ValueError or fecha_desde > fecha_hasta and fecha_desde < fecha_actual: 
+            print("Fechas invalidas")
     
     dia=0
     while dia < 7:
@@ -780,12 +855,12 @@ def CrearDesc():
     fila_prom.desc=desc
     fila_prom.fechaDesde=fecha_desde
     fila_prom.fechaHasta=fecha_hasta
-    fila_prom.est="Pendiente"
+    fila_prom.est="Pendiente".ljust(10)
     fila_prom.codLoc=convertir_n(cod_local)
 
     guardado_promociones(fila_prom)
 
-def Reporte():
+def ReporteDueño():
     global fecha_actual
 
     f_locales.seek(0)
@@ -796,19 +871,23 @@ def Reporte():
     tamaño_prom=os.path.getsize(ruta_promociones)
 
     print("Ingrese un rango de fechas para generar el reporte: ")
-    fecha_desde = input("Fecha inicial: ")
-    fecha_hasta = input("Fecha final: ")
-    while fecha_desde > fecha_hasta and fecha_desde < fecha_actual:
-        print("Fechas invalidas, vuelva a intentarlo")
-        fecha_desde = input("Fecha inicial: ")
-        fecha_hasta = input("Fecha final: ")
+    verif=True
+    while verif:
+        try:
+            fecha_desde = input("Fecha inicial: ")
+            fecha_hasta = input("Fecha final: ")
+            datetime.datetime.strptime(fecha_desde,'%d/%m/%Y')
+            datetime.datetime.strptime(fecha_hasta,'%d/%m/%Y')
+            verif=False
+        except ValueError or fecha_desde > fecha_hasta and fecha_desde < fecha_actual: 
+            print("Fechas invalidas")
 
     limpiar_pantalla()
 
     print("Titulo del Informe")
     print("Fecha Desde: ", fecha_desde, "   ", "Fecha Hasta: ", fecha_hasta)
     while fila_loc.tell() < tamaño_loc:
-        dueño=busqDueñoActual()
+        dueño=busqUsuarioActual()
         if dueño==fila_loc.codUsuario:
             cod_loc=fila_loc.codigo
             nom=fila_loc.nombre
@@ -892,7 +971,7 @@ def menuAdmin():
             case "4":
                 menu_novedades()
             case "5":
-                en_construccion()
+                ReporteAdmin()
             case "0":
                 fin=False
                 print(Style.BRIGHT + Fore.BLUE + "\nSALIENDO DEL PROGRAMA\n")
@@ -909,32 +988,13 @@ def menuDueño():
             case "1":
                 CrearDesc()
             case "2":
-                Reporte()
+                ReporteDueño()
             case "3":
                 DiagramacionChapin()
             case "0":
                 fin=False
                 print(Style.BRIGHT + Fore.BLUE + "\nSALIENDO DEL PROGRAMA\n")
 
-def GestionDesc():
-    ar_opciones3=["a","b","c","d"]
-    fin=True
-    while fin:
-        limpiar_pantalla()
-        print_menus("descuento")
-
-        accion=val_opciones(ar_opciones3,3,"\nOpcion no valida","\nIngrese una opcion: ")
- 
-        match accion:
-            case "a":
-                en_construccion()
-            case "b":
-                en_construccion()
-            case "c":
-                en_construccion()
-            case "d":
-                limpiar_pantalla()
-                fin=False
 
 def menuCliente():
    ar_opciones4=["1","2","3","4","0"]
@@ -947,11 +1007,9 @@ def menuCliente():
             case "1":
                 BusqDesc()
             case "2":
-                en_construccion()
+                SolDesc()
             case "3":
-                en_construccion()
-            case "4":
-                en_construccion()
+                DiagramacionChapin()
             case "0":
                 fin=False
                 limpiar_pantalla()
@@ -973,19 +1031,20 @@ def registro_usuario(tipo):
     while nuevo_usuario.clave=="":
         nuevo_usuario.clave=input("Ingrese la clave: ")
 
-    nuevo_usuario.clave.ljust(8)
+    nuevo_usuario.clave=nuevo_usuario.clave.ljust(8)
     if tipo=="cli":
         nuevo_usuario.tipo="cliente".ljust(20)
     else:
         nuevo_usuario.tipo="Dueño de local".ljust(20)
     cod_usuario+=1
     
+    print("len ",len(nuevo_usuario.tipo))
     nuevo_usuario.codigo=convertir_n(cod_usuario)
 
     ultima_fila()
     
     pickle.dump(nuevo_usuario,f_usuarios)
-    f_usuarios=guardado(ruta_usuarios,f_usuarios)
+    f_usuarios.flush()
 
 
 def verifNombre_n(nombre,campo):
@@ -1017,6 +1076,7 @@ def ultimo_cod(archivo,tamaño,tipo):
             case "usuario":
                 while archivo.tell()<tamaño:
                     fila=pickle.load(archivo)
+                print(fila.codigo)
                 mayor=int(fila.codigo)
             case "local":
                 while archivo.tell()<tamaño:
@@ -1098,7 +1158,7 @@ def ini():
                 fin=False
 
 #Programa Principal
-print(tamaño_usuarios)
+
 cod_usuario=ultimo_cod(f_usuarios,tamaño_usuarios,"usuario")
 cod_local=ultimo_cod(f_locales,tamaño_locales,"local")
 print(cod_local)
@@ -1106,4 +1166,3 @@ ini()
 
 f_locales.close()
 f_usuarios.close()
-
