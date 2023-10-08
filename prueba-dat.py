@@ -19,10 +19,10 @@ def abrir(ruta):
 
 f_aux=abrir(ruta_usuarios)
 
-fil=f=Usuario("01","".ljust(100),"".ljust(8),"".ljust(20))
+fil=Usuario("01","".ljust(100),"".ljust(8),"admin".ljust(20," "))
 
 pickle.dump(fil,f_aux)
-fil=f=Usuario("02","".ljust(100),"".ljust(8),"".ljust(20))
+fil=Usuario("01","".ljust(100),"".ljust(8),str("duenio de local").ljust(20," "))
 pickle.dump(fil,f_aux)
 
 

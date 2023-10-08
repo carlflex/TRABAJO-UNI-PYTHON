@@ -1,6 +1,7 @@
 import os
 import pickle
 
+
 class Usuario:
     def __init__(self,codigo,correo,clave,tipo):
         self.codigo=codigo
@@ -51,5 +52,5 @@ def mostrar_contenido(ruta):
              print(f"|| {r1}: ",r2, end=" ")
         print("")
         print("")
-
-mostrar_contenido(ruta_aux)
+ 
+mostrar_contenido(ruta_promociones)

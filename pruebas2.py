@@ -1,6 +1,6 @@
 import os
 import pickle
-
+from datetime import datetime as dt
 cadena="PEPE"
 cadena=cadena.ljust(50)
 
@@ -24,14 +24,21 @@ class Usuario:
 af=abrir(ruta_usuarios)
 
 
-f=Usuario("01","admin@shopping.com".ljust(100),"12345".ljust(8),"administrador".ljust(20))
+""" f=Usuario("01","admin@shopping.com".ljust(100),"12345".ljust(8),"administrador".ljust(20))
 
 pickle.dump(f,af)
 
 af.close()
+
+print("04".rstrip(" ")) """
+
+pepe=int("01")
+print(f"|{pepe}")
 
 """ f=pickle.load(af)
 pepe="admin@shopping.com"
 
 
 print(f.correo.rstrip(" ")==pepe) """
+
+
