@@ -28,11 +28,17 @@ class Promocion:
         self.est=""
         self.codLoc=0
 
-ruta_usuarios="./db/usuarios.dat"
-ruta_locales="./db/locales.dat"
-ruta_promociones="./db/promociones.dat" 
-ruta_aux="./db/aux.dat"
+class UsoPromocion:
+    def __init__(self):
+        self.codCliente=0
+        self.codPromo=0
+        self.fechaUsoPromo=""
 
+ruta_usuarios="./usuarios.dat"
+ruta_locales="./locales.dat"
+ruta_promociones="./promociones.dat" 
+ruta_aux="./db/aux.dat"
+ruta_usoProm="./usoPromociones.dat"
 pepe={"pepe":23234,"valor":3434}
 
 

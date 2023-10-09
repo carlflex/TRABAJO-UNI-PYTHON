@@ -5,7 +5,7 @@ cadena="PEPE"
 cadena=cadena.ljust(50)
 
 cad2="PEPE"
-ruta_usuarios="./db/usuarios.dat"
+ruta_usuarios="c:\\tp3\pepe.dat\\"
 def abrir(ruta):
     if not os.path.exists(ruta):   
         objeto = open (ruta, "w+b")   
